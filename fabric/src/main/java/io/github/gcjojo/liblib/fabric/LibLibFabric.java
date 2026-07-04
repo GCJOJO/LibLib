@@ -1,6 +1,7 @@
 package io.github.gcjojo.liblib.fabric;
 
 import io.github.gcjojo.liblib.LibLib;
+import io.github.gcjojo.liblib.fabric.utils.FabricPlayerDataManager;
 import net.fabricmc.api.ModInitializer;
 
 public final class LibLibFabric implements ModInitializer {

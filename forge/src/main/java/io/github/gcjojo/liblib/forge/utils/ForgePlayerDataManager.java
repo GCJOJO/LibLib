@@ -1,6 +1,6 @@
-package io.github.gcjojo.liblib.forge;
+package io.github.gcjojo.liblib.forge.utils;
 
-import io.github.gcjojo.liblib.PlayerDataManager;
+import io.github.gcjojo.liblib.utils.PlayerDataManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 

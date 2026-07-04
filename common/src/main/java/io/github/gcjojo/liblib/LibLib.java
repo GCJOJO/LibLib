@@ -3,6 +3,7 @@ package io.github.gcjojo.liblib;
 import com.mojang.logging.LogUtils;
 import dev.architectury.event.events.common.PlayerEvent;
 import io.github.gcjojo.liblib.client.SoundPlayer;
+import io.github.gcjojo.liblib.utils.PlayerDataManager;
 import net.minecraft.server.level.ServerPlayer;
 import org.slf4j.Logger;
 

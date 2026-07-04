@@ -3,6 +3,7 @@ package io.github.gcjojo.liblib.forge;
 import dev.architectury.platform.forge.EventBuses;
 import io.github.gcjojo.liblib.LibLib;
 import io.github.gcjojo.liblib.forge.client.ForgeSoundPlayer;
+import io.github.gcjojo.liblib.forge.utils.ForgePlayerDataManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

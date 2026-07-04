@@ -1,8 +1,8 @@
-package io.github.gcjojo.liblib.fabric;
+package io.github.gcjojo.liblib.fabric.utils;
 
-import io.github.gcjojo.liblib.PlayerDataManager;
 import io.github.gcjojo.liblib.fabric.data_components.ModComponents;
 import io.github.gcjojo.liblib.fabric.data_components.PlayerDataComponent;
+import io.github.gcjojo.liblib.utils.PlayerDataManager;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 
