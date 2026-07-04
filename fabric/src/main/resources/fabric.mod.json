@@ -19,6 +19,9 @@
     ],
     "client": [
       "io.github.gcjojo.liblib.fabric.client.LibLibFabricClient"
+    ],
+    "cardinal-components-entity": [
+      "io.github.gcjojo.liblib.fabric.data_components.ModComponents"
     ]
   },
   "mixins": [
@@ -31,7 +34,9 @@
     "architectury": ">=9.2.14",
     "fabric-api": "*"
   },
-  "suggests": {
-    "another-mod": "*"
+  "custom": {
+    "cardinal-components": [
+      "liblib:player_data"
+    ]
   }
 }
