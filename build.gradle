@@ -72,7 +72,7 @@ subprojects {
             mavenLocal()
             maven {
                 name = "Libs"
-                url "file://${project.projectDir}/libs"
+                url "file://${rootProject.projectDir}/build/libs"
             }
         }
     }
