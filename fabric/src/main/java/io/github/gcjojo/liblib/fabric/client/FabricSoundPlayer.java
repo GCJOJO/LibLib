@@ -1,0 +1,25 @@
+package io.github.gcjojo.liblib.fabric.client;
+
+import io.github.gcjojo.liblib.client.SoundPlayer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+
+@Environment(EnvType.CLIENT)
+public class FabricSoundPlayer extends SoundPlayer {
+    @Override
+    public void playSound(String soundName, float pitch, float volume) {
+        SoundEvent soundEvent = loadSound(soundName);
+        if (soundEvent != null)
+            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, pitch, volume));
+    }
+
+    @Override
+    public SoundEvent loadSound(String soundName) {
+        return BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.tryParse(soundName));
+    }
+}
