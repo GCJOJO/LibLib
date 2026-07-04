@@ -1,13 +1,13 @@
 package io.github.gcjojo.liblib.fabric.data_components;
 
 import dev.onyxstudios.cca.api.v3.component.ComponentV3;
-import io.github.gcjojo.blablalib.BlablaLib;
+import io.github.gcjojo.liblib.LibLib;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 public class PlayerDataComponent implements ComponentV3 {
     private boolean isInDialogue = false;
-    private ResourceLocation currentDialogue = ResourceLocation.tryBuild(BlablaLib.MOD_ID, "dogcheck");
+    private ResourceLocation currentDialogue = ResourceLocation.tryBuild(LibLib.MOD_ID, "dogcheck");
     private ResourceLocation lastReadDialogue;
 
     private CompoundTag additionalData = new CompoundTag();
