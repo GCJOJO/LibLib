@@ -1,30 +1,24 @@
 package io.github.gcjojo.liblib;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public abstract class PlayerDataManager {
-    public abstract void setPlayerInDialogue(Player player, boolean isInDialogue);
+    protected abstract CompoundTag getAdditionalData(Player player);
 
-    public abstract boolean getPlayerInDialogue(Player player);
+    protected abstract void setAdditionalData(Player player, CompoundTag data);
 
-    public abstract void setPlayerLastReadDialogue(Player player, ResourceLocation lastReadChapter);
+    public CompoundTag getAdditionalData(Player player, String modId) {
+        if (!getAdditionalData(player).contains(modId))
+            getAdditionalData(player).put(modId, new CompoundTag());
+        return getAdditionalData(player).getCompound(modId);
+    }
 
-    public abstract ResourceLocation getPlayerLastReadDialogue(Player player);
-
-    public abstract void setPlayerCurrentDialogue(Player player, ResourceLocation currentChapter);
-
-    public abstract ResourceLocation getPlayerCurrentDialogue(Player player);
-
-    public abstract CompoundTag getAdditionalData(Player player);
-
-    public abstract void setAdditionalData(Player player, CompoundTag data);
+    public void setAdditionalData(Player player, String modId, CompoundTag data) {
+        getAdditionalData(player, modId).merge(data);
+    }
 
     public void copyPlayer(Player oldPlayer, Player newPlayer) {
-        setPlayerInDialogue(newPlayer, false);
-        setPlayerCurrentDialogue(newPlayer, getPlayerCurrentDialogue(oldPlayer));
-        setPlayerLastReadDialogue(newPlayer, getPlayerLastReadDialogue(oldPlayer));
         setAdditionalData(newPlayer, getAdditionalData(oldPlayer));
     }
 }
