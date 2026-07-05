@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 
 public class ForgePlayerDataManager extends PlayerDataManager {
-    private CompoundTag getBlablalibTag(Player player) {
+    private CompoundTag getLibLibTag(Player player) {
         CompoundTag persistentData = player.getPersistentData();
         if (!persistentData.contains("LibLib"))
             persistentData.put("LibLib", new CompoundTag());
@@ -14,7 +14,7 @@ public class ForgePlayerDataManager extends PlayerDataManager {
 
     @Override
     public CompoundTag getAdditionalData(Player player) {
-        CompoundTag liblibTag = getBlablalibTag(player);
+        CompoundTag liblibTag = getLibLibTag(player);
         if (!liblibTag.contains("AdditionalData"))
             liblibTag.put("AdditionalData", new CompoundTag());
         return liblibTag.getCompound("AdditionalData");
