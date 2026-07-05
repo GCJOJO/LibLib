@@ -24,17 +24,17 @@ public abstract class PlayerDataManager {
         setAdditionalData(newPlayer, getAdditionalData(oldPlayer));
     }
 
-    public void serializePlayerData(Player player, PlayerData data, ResourceLocation dataLocation) {
+    public void serializePlayerData(Player player, PlayerSaveData data, ResourceLocation dataLocation) {
         CompoundTag modData = getAdditionalData(player, dataLocation.getNamespace());
         modData.put(dataLocation.getPath(), data.serialize());
     }
 
-    public <T extends PlayerData> T deserializePlayerData(Player player, ResourceLocation dataLocation, Class<T> playerDataClass) {
+    public <T extends PlayerSaveData> T deserializePlayerData(Player player, ResourceLocation dataLocation, Class<T> playerDataClass) {
         T playerData = PlayerDataRegistry.create(playerDataClass);
         CompoundTag modData = getAdditionalData(player, dataLocation.getNamespace());
         if (modData.contains(dataLocation.getPath()))
             playerData.deserialize(modData.getCompound(dataLocation.getPath()));
-        
+
         return playerData;
     }
 }

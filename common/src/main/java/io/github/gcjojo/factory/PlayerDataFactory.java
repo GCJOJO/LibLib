@@ -1,7 +1,7 @@
 package io.github.gcjojo.factory;
 
-import io.github.gcjojo.liblib.utils.PlayerData;
+import io.github.gcjojo.liblib.utils.PlayerSaveData;
 
-public interface PlayerDataFactory<T extends PlayerData> {
+public interface PlayerDataFactory<T extends PlayerSaveData> {
     T create();
 }
