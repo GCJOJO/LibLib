@@ -7,11 +7,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
+import java.util.List;
 import java.util.Optional;
 
+// merci ClaudeSlop
 public class PlayerUtils {
     public static Optional<ResourceLocation> getPlayerBiome(ServerPlayer serverPlayer) {
         Holder<Biome> biomeHolder = serverPlayer.level()
@@ -41,5 +44,15 @@ public class PlayerUtils {
         return level.structureManager()
                 .getStructureWithPieceAt(player.blockPosition(), tag)
                 .isValid();
+    }
+
+    // TODO Rework to return the difference in inventories
+    public static boolean compareInventories(List<ItemStack> a, List<ItemStack> b) {
+        if(a.size() != b.size()) return false;
+        for(int i = 0; i <= a.size(); i++)
+            if(!ItemStack.matches(a.get(i), b.get(i)))
+                return false;
+
+        return true;
     }
 }

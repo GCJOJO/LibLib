@@ -22,4 +22,8 @@ public interface LibLibEvents {
     public interface PlayerEnteredStructure {
         void onPlayerEnteredStructure(ServerPlayer serverPlayer, ResourceLocation newStructureId);
     }
+
+    public interface PlayerInventoryChanged {
+
+    }
 }
