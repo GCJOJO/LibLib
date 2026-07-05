@@ -2,6 +2,8 @@ package io.github.gcjojo.liblib;
 
 import com.mojang.logging.LogUtils;
 import io.github.gcjojo.liblib.client.SoundPlayer;
+import io.github.gcjojo.liblib.events.LibLibEvents;
+import io.github.gcjojo.liblib.factory.PlayerDataRegistry;
 import io.github.gcjojo.liblib.utils.PlayerDataManager;
 import org.slf4j.Logger;
 
@@ -15,6 +17,12 @@ public final class LibLib {
 
     public static void init() {
         LibLibEventManager.registerEvents();
+        PlayerDataRegistry.register(PlayerInventorySaveData.class, PlayerInventorySaveData::new);
+
+        LibLibEvents.PLAYER_INVENTORY_CHANGED.register((player, inventoryDifference) -> {
+            getLogger().info("{}'s inventory has changed :", player.getName().getString());
+            inventoryDifference.forEach((itemId, amountDelta) -> getLogger().info("    {}x{}", amountDelta, itemId));
+        });
     }
 
     public static SoundPlayer getSoundPlayer() {

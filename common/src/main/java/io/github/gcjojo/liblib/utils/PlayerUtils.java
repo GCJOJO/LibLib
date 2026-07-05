@@ -1,17 +1,22 @@
 package io.github.gcjojo.liblib.utils;
 
+import io.github.gcjojo.liblib.LibLib;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 // merci ClaudeSlop
@@ -46,13 +51,49 @@ public class PlayerUtils {
                 .isValid();
     }
 
-    // TODO Rework to return the difference in inventories
-    public static boolean compareInventories(List<ItemStack> a, List<ItemStack> b) {
-        if(a.size() != b.size()) return false;
-        for(int i = 0; i <= a.size(); i++)
-            if(!ItemStack.matches(a.get(i), b.get(i)))
-                return false;
+    public static Map<ResourceLocation, Integer> getInventoryItemAmounts(ServerLevel level, List<ItemStack> inventory) {
+        Map<ResourceLocation, Integer> itemAmounts = new HashMap<>();
+        inventory.forEach(stack -> {
+            Registry<Item> itemRegistry = level.registryAccess().registryOrThrow(Registries.ITEM);
+            ResourceLocation itemId = itemRegistry.getKey(stack.getItem());
+            itemAmounts.computeIfPresent(itemId, (item, oldAmount) -> oldAmount + stack.getCount());
+            itemAmounts.putIfAbsent(itemId, stack.getCount());
+        });
 
-        return true;
+        return itemAmounts;
+    }
+
+    public static Map<ResourceLocation, Integer> compareInventories(ServerLevel level, Map<ResourceLocation, Integer> amountsA, Map<ResourceLocation, Integer> amountsB) {
+        Map<ResourceLocation, Integer> difference = new HashMap<>();
+        if (amountsA.isEmpty() || amountsB.isEmpty() || amountsA.equals(amountsB)) return difference;
+
+        /*LibLib.getLogger().info("Amounts a");
+        amountsA.forEach((itemId, amountA) -> LibLib.getLogger().info("    -{}x{}", amountA, itemId));
+
+        LibLib.getLogger().info("Amounts b");
+        amountsB.forEach((itemId, amountB) -> LibLib.getLogger().info("    -{}x{}", amountB, itemId));*/
+
+        List<ResourceLocation> allItems = new java.util.ArrayList<>(amountsB.keySet().stream().toList());
+        try {
+            allItems.addAll(amountsA.keySet().stream().toList());
+        } catch (UnsupportedOperationException e) {
+            LibLib.printException("Invalid Operation when adding amountsA and amountsB", e);
+        }
+
+        allItems.forEach(itemId -> {
+            if (!amountsA.containsKey(itemId) || amountsA.get(itemId) == 0) {
+                difference.put(itemId, amountsB.get(itemId));
+                return;
+            } else if (!amountsB.containsKey(itemId) || amountsB.get(itemId) == 0) {
+                difference.put(itemId, -amountsA.get(itemId));
+                return;
+            }
+
+            int amountA = amountsA.get(itemId);
+            int amountB = amountsB.get(itemId);
+            difference.put(itemId, amountB - amountA);
+        });
+
+        return difference;
     }
 }

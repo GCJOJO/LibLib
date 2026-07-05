@@ -6,10 +6,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 
+import java.util.Map;
+
 public interface LibLibEvents {
     Event<PlayerChangedChunk> PLAYER_CHANGED_CHUNK = EventFactory.createLoop();
     Event<PlayerEnteredBiome> PLAYER_ENTERED_BIOME = EventFactory.createLoop();
     Event<PlayerEnteredStructure> PLAYER_ENTERED_STRUCTURE = EventFactory.createLoop();
+    Event<PlayerInventoryChanged> PLAYER_INVENTORY_CHANGED = EventFactory.createLoop();
 
     public interface PlayerChangedChunk {
         void onPlayerChangedChunk(ServerPlayer serverPlayer, ChunkPos newChunk);
@@ -24,6 +27,6 @@ public interface LibLibEvents {
     }
 
     public interface PlayerInventoryChanged {
-
+        void onPlayerInventoryChanged(ServerPlayer ServerPlayer, Map<ResourceLocation, Integer> inventoryDifference);
     }
 }
