@@ -1,4 +1,4 @@
-package io.github.gcjojo.factory;
+package io.github.gcjojo.liblib.factory;
 
 import io.github.gcjojo.liblib.utils.PlayerSaveData;
 

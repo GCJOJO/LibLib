@@ -1,6 +1,6 @@
 package io.github.gcjojo.liblib.utils;
 
-import io.github.gcjojo.factory.PlayerDataRegistry;
+import io.github.gcjojo.liblib.factory.PlayerDataRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
