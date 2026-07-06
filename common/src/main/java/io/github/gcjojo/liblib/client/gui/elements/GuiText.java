@@ -42,7 +42,7 @@ public class GuiText extends GuiElement {
     }
 
     @Override
-    public void drawContents(GuiGraphics graphics) {
+    public void drawContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         PoseStack pose = graphics.pose();
         pose.pushPose();
         float horizontalAlignmentMultiplier;
@@ -64,6 +64,11 @@ public class GuiText extends GuiElement {
 
         graphics.drawString(font, contents, 0, 0, 0xFFFFFFFF);
         pose.popPose();
+    }
+
+    @Override
+    public void tick() {
+
     }
 
     @Override

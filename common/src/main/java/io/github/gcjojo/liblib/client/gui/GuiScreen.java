@@ -47,7 +47,12 @@ public class GuiScreen extends Screen {
         if (renderBackground)
             renderBackground(graphics);
 
-        elements.forEach(element -> element.draw(graphics));
+        elements.forEach(element -> element.draw(graphics, mouseX, mouseY, partialTick));
+    }
+
+    @Override
+    public void tick() {
+        elements.forEach(GuiElement::tick);
     }
 
     @Override

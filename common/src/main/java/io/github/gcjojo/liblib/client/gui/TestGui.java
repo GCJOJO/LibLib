@@ -1,5 +1,7 @@
 package io.github.gcjojo.liblib.client.gui;
 
+import io.github.gcjojo.liblib.LibLib;
+import io.github.gcjojo.liblib.client.gui.elements.GuiButton;
 import io.github.gcjojo.liblib.client.gui.elements.GuiColorRect;
 import io.github.gcjojo.liblib.client.gui.elements.GuiImage;
 import io.github.gcjojo.liblib.client.gui.elements.GuiText;
@@ -38,5 +40,14 @@ public class TestGui extends GuiScreen {
         image.setAlpha(180);
 
         addElement(image);
+
+        GuiButton button = new GuiButton(this, Component.literal("Hey there !"), () -> LibLib.getLogger().info("Button Pressed !"));
+        button.setPosition(new Vec2(this.width * 0.5f, this.height * 0.1f));
+        addElement(button);
+
+        GuiButton inactiveButton = new GuiButton(this, Component.literal("I'm inactive !"));
+        inactiveButton.setPosition(new Vec2(this.width * 0.5f, this.height * 0.2f));
+        inactiveButton.setActive(false);
+        addElement(inactiveButton);
     }
 }

@@ -14,11 +14,16 @@ import net.minecraft.world.phys.Vec2;
 @Getter
 @Setter
 public abstract class GuiElement {
+    protected static boolean DEBUG_DRAW_PIVOT_POINT = false;
+    protected static boolean DEBUG_DRAW_BOUNDING_BOX = false;
+
     protected Vec2 position = Vec2.ZERO;
     protected float angle = 0.0f;
     protected Vec2 scale = Vec2.ONE;
-    protected Color color;
+    protected Color color = Color.WHITE;
     protected Vec2 rotationPivot = new Vec2(0.5f, 0.5f);
+    protected boolean isVisible = true;
+    protected Vec2 drawOffset = Vec2.ZERO;
 
     protected Screen screen;
 
@@ -40,8 +45,8 @@ public abstract class GuiElement {
 
     public abstract boolean supportsShaderColor();
 
-    public void draw(GuiGraphics graphics) {
-        if (color.alpha < 8) return;
+    public void draw(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        if (!isVisible() || color.alpha < 8) return;
         if (color.alpha >= 255) color.alpha = 255;
 
         if (supportsShaderColor()) {
@@ -55,20 +60,30 @@ public abstract class GuiElement {
         float rotationPivotY = getHeight() * (rotationPivot.y - 0.5f);
 
         // Draw Rotation Pivot
-        /*graphics.fill((int) position.x + (int) rotationPivotX - 2,
-                (int) position.y + (int) rotationPivotY - 2,
-                (int) position.x + (int) rotationPivotX + 2,
-                (int) position.y + (int) rotationPivotY + 2,
-                0xFFFF0000);*/
+        if (DEBUG_DRAW_PIVOT_POINT)
+            graphics.fill((int) position.x + (int) rotationPivotX - 2,
+                    (int) position.y + (int) rotationPivotY - 2,
+                    (int) position.x + (int) rotationPivotX + 2,
+                    (int) position.y + (int) rotationPivotY + 2,
+                    0xFFFF0000);
+
 
         PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
 
-        poseStack.translate(position.x, position.y, 0.0f);
+        Vec2 finalPositon = position.add(drawOffset);
+
+        poseStack.translate(finalPositon.x, finalPositon.y, 0.0f);
         poseStack.scale(scale.x, scale.y, 1.0f);
         poseStack.rotateAround(Axis.ZP.rotationDegrees(angle), rotationPivotX, rotationPivotY, 0.0f);
 
-        drawContents(graphics);
+        drawContents(graphics, mouseX, mouseY, partialTick);
+
+        // Draw bounds
+        // @TODO Fix to draw correct bounding boxes
+        if (DEBUG_DRAW_BOUNDING_BOX)
+            graphics.fill((int) (drawOffset.x + position.x), (int) (drawOffset.x + position.x + getWidth()),
+                    (int) (drawOffset.y + position.y), (int) (drawOffset.y + position.y + getHeight()), 0xFF00FFFF);
 
         poseStack.popPose();
 
@@ -76,7 +91,9 @@ public abstract class GuiElement {
             RenderSystem.disableBlend();
     }
 
-    protected abstract void drawContents(GuiGraphics graphics);
+    protected abstract void drawContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick);
+
+    public abstract void tick();
 
     public void setAlpha(int newAlpha) {
         color.alpha = MathUtils.clamp(newAlpha, 0, 255);
@@ -105,8 +122,8 @@ public abstract class GuiElement {
 
     public boolean isMouseOver(double mouseX, double mouseY) {
         Vec2 localPos = screenToLocal(new Vec2((float) mouseX, (float) mouseY));
-        return localPos.x >= position.x && localPos.x <= position.x + getWidth() &&
-                localPos.y >= position.y && localPos.y <= position.y + getHeight();
+        return localPos.x >= drawOffset.x + position.x && localPos.x <= drawOffset.x + position.x + getWidth() &&
+                localPos.y >= drawOffset.y + position.y && localPos.y <= drawOffset.y + position.y + getHeight();
     }
 
     public void mouseClicked(double mouseX, double mouseY, int button) {
