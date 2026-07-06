@@ -6,6 +6,7 @@ import net.fabricmc.api.ClientModInitializer;
 public final class LibLibFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        LibLib.initClient();
         LibLib.setSoundPlayer(new FabricSoundPlayer());
     }
 }

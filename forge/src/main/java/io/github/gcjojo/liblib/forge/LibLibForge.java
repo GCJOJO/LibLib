@@ -25,6 +25,7 @@ public final class LibLibForge {
     public static class ClientModEntryForge {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            LibLib.initClient();
             LibLib.setSoundPlayer(new ForgeSoundPlayer());
         }
     }
