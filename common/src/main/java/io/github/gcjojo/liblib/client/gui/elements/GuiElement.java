@@ -75,6 +75,7 @@ public abstract class GuiElement {
 
         poseStack.translate(finalPositon.x, finalPositon.y, 0.0f);
         poseStack.scale(scale.x, scale.y, 1.0f);
+        //Merci ClaudeSlop
         poseStack.rotateAround(Axis.ZP.rotationDegrees(angle), rotationPivotX, rotationPivotY, 0.0f);
 
         drawContents(graphics, mouseX, mouseY, partialTick);
@@ -131,4 +132,10 @@ public abstract class GuiElement {
     }
 
     protected abstract void mouseClickedContent(double mouseX, double mouseY, int button);
+
+    public abstract void mouseReleased(double mouseX, double mouseY, int button);
+
+    public abstract void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY);
+
+    public abstract void mouseScrolled(double mouseX, double mouseY, double delta);
 }

@@ -49,7 +49,22 @@ public class GuiColorRect extends GuiElement {
     }
 
     @Override
+    public void mouseScrolled(double mouseX, double mouseY, double delta) {
+
+    }
+
+    @Override
     protected void mouseClickedContent(double mouseX, double mouseY, int button) {
 
+    }
+
+    @Override
+    public void mouseReleased(double mouseX, double mouseY, int button) {
+
+    }
+
+    @Override
+    public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        
     }
 }

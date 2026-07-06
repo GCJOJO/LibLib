@@ -103,9 +103,24 @@ public class GuiButton extends GuiElement {
     }
 
     @Override
+    public void mouseScrolled(double mouseX, double mouseY, double delta) {
+
+    }
+
+    @Override
     protected void mouseClickedContent(double mouseX, double mouseY, int button) {
         if (button == GLFW.GLFW_MOUSE_BUTTON_1 && callback != null)
             callback.onGuiButtonClicked();
+    }
+
+    @Override
+    public void mouseReleased(double mouseX, double mouseY, int button) {
+
+    }
+
+    @Override
+    public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+
     }
 
     private int getAtlasTextureY(int id) {

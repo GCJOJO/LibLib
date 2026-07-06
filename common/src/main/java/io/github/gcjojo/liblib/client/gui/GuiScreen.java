@@ -60,4 +60,26 @@ public class GuiScreen extends Screen {
         elements.forEach(element -> element.mouseClicked(mouseX, mouseY, button));
         return super.mouseClicked(mouseX, mouseY, button);
     }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        elements.forEach(element -> element.mouseReleased(mouseX, mouseY, button));
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+        elements.forEach(element -> element.mouseDragged(mouseX, mouseY, button, deltaX, deltaY));
+        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
+        elements.forEach(element -> {
+            if (element.isMouseOver(mouseX, mouseY))
+                element.mouseScrolled(mouseX, mouseY, scroll);
+        });
+
+        return super.mouseScrolled(mouseX, mouseY, scroll);
+    }
 }
