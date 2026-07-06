@@ -43,12 +43,17 @@ public class GuiSlider extends GuiElement {
         this.startValue = startValue;
         this.endValue = endValue;
         this.step = MathUtils.clamp(step, 0, Math.abs(endValue - startValue));
+        this.direction = direction;
 
+        this.currentValue = startValue;
+        refresh();
+    }
+
+    public void refresh() {
         if (this.endValue == this.startValue)
             this.endValue += this.step;
 
-        this.currentValue = startValue;
-        this.direction = direction;
+        this.currentValue = MathUtils.clamp(this.currentValue, this.startValue, this.endValue);
 
         int buttonLength = (int) ((step / Math.abs(endValue - startValue)) * length);
         if (buttonLength < 10) buttonLength = 10;
@@ -88,13 +93,14 @@ public class GuiSlider extends GuiElement {
 
     @Override
     public void tick() {
-        float newButtonPosition = currentValue / Math.abs(endValue - startValue) * length;
+        float newButtonPosition = (currentValue - startValue) / Math.abs(endValue - startValue) * length;
+        sliderBackground.setPosition(new Vec2(this.position.x, this.position.y));
         switch (direction) {
             case Horizontal -> {
-                sliderButton.setPosition(new Vec2(newButtonPosition, 0));
+                sliderButton.setPosition(new Vec2(this.position.x + newButtonPosition, this.position.y));
             }
             case Vertical -> {
-                sliderButton.setPosition(new Vec2(0, newButtonPosition));
+                sliderButton.setPosition(new Vec2(this.position.x, this.position.y + newButtonPosition));
             }
         }
     }
@@ -146,7 +152,7 @@ public class GuiSlider extends GuiElement {
 
     // Convert to a value
     protected void clickBackground(double mouseX, double mouseY, int button) {
-        
+
     }
 
     public enum SliderDirection {

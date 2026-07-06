@@ -88,6 +88,12 @@ public class GuiBoxContainer extends GuiContainer {
 
     }
 
+    public boolean doesChildrenOverflow() {
+        if (direction == BoxDirection.Horizontal)
+            return getContentsWidth() > this.containerWidth;
+        return getContentsHeight() > this.containerHeight;
+    }
+
     @Override
     public void onChildrenUpdate() {
         childrenDirty = true;

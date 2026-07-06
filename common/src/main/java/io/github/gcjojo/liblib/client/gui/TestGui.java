@@ -52,7 +52,8 @@ public class TestGui extends GuiScreen {
         inactiveButton.setActive(false);
         addElement(inactiveButton);
 
-        boxContainer = new GuiSliderContainer(this, (int) (this.width * 0.5f), (int) (this.height * 0.5f), GuiBoxContainer.BoxDirection.Vertical);
+        boxContainer = new GuiSliderContainer(this, (int) (this.width * 0.12f), (int) (this.height * 0.4f), GuiBoxContainer.BoxDirection.Vertical);
+        boxContainer.setPosition(new Vec2(10, 10));
         for (int i = 0; i <= 25; i++) {
             GuiText childText = new GuiText(this, Component.literal(String.format("Text %s", i)));
             boxContainer.addChild(childText);
