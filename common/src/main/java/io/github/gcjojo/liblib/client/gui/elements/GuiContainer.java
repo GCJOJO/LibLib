@@ -21,6 +21,14 @@ public abstract class GuiContainer extends GuiElement {
         this.containerHeight = containerHeight;
     }
 
+    public float getContainerWidth() {
+        return this.containerWidth * scale.x;
+    }
+
+    public float getContainerHeight() {
+        return this.containerHeight * scale.y;
+    }
+
     public void addChild(GuiElement child) {
         children.add(child);
         onChildrenUpdate();
@@ -37,9 +45,9 @@ public abstract class GuiContainer extends GuiElement {
     }
 
     @Override
-    protected void drawContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         graphics.enableScissor((int) this.position.x, (int) this.position.y, (int) this.position.x + containerWidth, (int) this.position.y + containerHeight);
-        children.forEach(child -> child.draw(graphics, mouseX, mouseY, partialTick));
+        children.forEach(child -> child.draw(graphics, mouseX - this.position.x, mouseY - this.position.y, partialTick));
         RenderSystem.disableScissor();
     }
 

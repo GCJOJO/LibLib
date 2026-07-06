@@ -38,7 +38,7 @@ public class GuiImage extends GuiElement {
     }
 
     @Override
-    protected void drawContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         graphics.blit(imagePath, -imageWidth / 2, -imageHeight / 2, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
     }
 

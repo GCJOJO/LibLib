@@ -75,7 +75,7 @@ public class GuiBoxContainer extends GuiContainer {
 
     @Override
     protected void mouseClickedContent(double mouseX, double mouseY, int button) {
-        children.forEach(element -> element.mouseClickedContent(mouseX, mouseY, button));
+        children.forEach(element -> element.mouseClickedContent(mouseX - this.position.x, mouseY - this.position.y, button));
     }
 
     @Override

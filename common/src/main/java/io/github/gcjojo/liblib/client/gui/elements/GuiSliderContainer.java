@@ -14,7 +14,7 @@ public class GuiSliderContainer extends GuiBoxContainer {
 
     public GuiSliderContainer(Screen screen, int containerWidth, int containerHeight, BoxDirection direction) {
         super(screen, containerWidth, containerHeight, direction);
-        int length = direction == BoxDirection.Vertical ? this.containerHeight : this.containerWidth;
+        int length = direction == BoxDirection.Vertical ? (int) getContainerHeight() : (int) getContainerWidth();
         length = (int) (length * 0.5f);
 
         this.scrollbar = new GuiSlider(screen, SCROLLBAR_WIDTH, length, 1, 2, 1,
@@ -22,10 +22,18 @@ public class GuiSliderContainer extends GuiBoxContainer {
                 this::onSliderValueChanged);
     }
 
+    // Merci ClaudeSlop
+    // TODO Fix it tho it still doesn't work
+    public float getMaxScrollOffset() {
+        float contentsSize = direction == BoxDirection.Vertical ? getContentsHeight() : getContentsWidth();
+        float containerSize = direction == BoxDirection.Vertical ? getContainerHeight() : getContainerWidth();
+        return Math.max(0.0f, contentsSize - containerSize) * 0.5f;
+    }
+
     @Override
     public void onChildrenUpdate() {
         super.onChildrenUpdate();
-        scrollbar.setEndValue(children.size() + 1);
+        scrollbar.setEndValue(getMaxScrollOffset());
 
         int length = direction == BoxDirection.Vertical ? this.containerHeight : this.containerWidth;
         scrollbar.setLength(length);
@@ -38,11 +46,11 @@ public class GuiSliderContainer extends GuiBoxContainer {
     }
 
     @Override
-    protected void drawContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         super.drawContents(graphics, mouseX, mouseY, partialTick);
 
         if (doesChildrenOverflow())
-            scrollbar.drawContents(graphics, mouseX, mouseY, partialTick);
+            scrollbar.drawContents(graphics, mouseX - this.position.x, mouseY - this.position.y, partialTick);
     }
 
     public void onSliderValueChanged(float newValue) {

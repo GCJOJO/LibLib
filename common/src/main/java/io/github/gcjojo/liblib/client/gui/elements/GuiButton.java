@@ -77,7 +77,7 @@ public class GuiButton extends GuiElement {
     }
 
     @Override
-    protected void drawContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         if (!isActive())
             inactiveNineSlice.draw(graphics, mouseX, mouseY, partialTick);
         else if (isMouseOver(mouseX, mouseY))

@@ -58,8 +58,13 @@ public class TestGui extends GuiScreen {
             GuiText childText = new GuiText(this, Component.literal(String.format("Text %s", i)));
             boxContainer.addChild(childText);
         }
-        addElement(boxContainer);
+        for (int i = 0; i <= 25; i++) {
+            GuiButton childButton = new GuiButton(this, Component.literal(String.format("Button %s", i)));
+            childButton.setDrawOffset(new Vec2(childButton.getButtonWidth() * 0.5f, childButton.getButtonHeight() * 0.5f));
+            boxContainer.addChild(childButton);
+        }
 
+        addElement(boxContainer);
     }
 
     @Override

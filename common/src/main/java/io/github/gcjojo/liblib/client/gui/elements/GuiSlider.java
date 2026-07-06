@@ -86,7 +86,7 @@ public class GuiSlider extends GuiElement {
     }
 
     @Override
-    protected void drawContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         sliderBackground.draw(graphics, mouseX, mouseY, partialTick);
         sliderButton.draw(graphics, mouseX, mouseY, partialTick);
     }

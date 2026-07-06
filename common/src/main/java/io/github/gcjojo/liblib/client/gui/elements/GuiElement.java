@@ -45,7 +45,7 @@ public abstract class GuiElement {
 
     public abstract boolean supportsShaderColor();
 
-    public void draw(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void draw(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         if (!isVisible() || color.alpha < 8) return;
         if (color.alpha >= 255) color.alpha = 255;
 
@@ -92,7 +92,7 @@ public abstract class GuiElement {
             RenderSystem.disableBlend();
     }
 
-    protected abstract void drawContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick);
+    protected abstract void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick);
 
     public abstract void tick();
 

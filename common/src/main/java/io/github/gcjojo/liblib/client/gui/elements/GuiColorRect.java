@@ -39,7 +39,7 @@ public class GuiColorRect extends GuiElement {
     }
 
     @Override
-    protected void drawContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         graphics.fill(left, bottom, right, top, color.getColorInt());
     }
 
@@ -65,6 +65,6 @@ public class GuiColorRect extends GuiElement {
 
     @Override
     public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        
+
     }
 }

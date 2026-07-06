@@ -55,7 +55,7 @@ public class GuiNineSliced extends GuiElement {
     }
 
     @Override
-    protected void drawContents(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         graphics.blitNineSliced(atlasLocation, x, y, nineSliceWidth, nineSliceHeight, sliceWidth, sliceHeight, uWidth, vHeight, textureX, textureY);
     }
 
@@ -81,6 +81,6 @@ public class GuiNineSliced extends GuiElement {
 
     @Override
     public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        
+
     }
 }
