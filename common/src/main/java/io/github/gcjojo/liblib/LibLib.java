@@ -3,6 +3,8 @@ package io.github.gcjojo.liblib;
 import com.mojang.logging.LogUtils;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
+import io.github.gcjojo.liblib.api.BlablaLibAPI;
+import io.github.gcjojo.liblib.api.QuestsLibAPI;
 import io.github.gcjojo.liblib.client.SoundPlayer;
 import io.github.gcjojo.liblib.client.gui.TestGui;
 import io.github.gcjojo.liblib.events.LibLibEvents;
@@ -25,6 +27,9 @@ public final class LibLib {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static SoundPlayer SOUND_PLAYER;
     private static PlayerDataManager PLAYER_DATA_MANAGER;
+
+    private static BlablaLibAPI BLABLALIB_API = new BlablaLibAPI.EmptyBlablaLibAPI();
+    private static QuestsLibAPI QUESTSLIB_API = new QuestsLibAPI.EmptyQuestsLibAPI();
 
     public static void init() {
         LibLibEventManager.registerEvents();
@@ -60,6 +65,22 @@ public final class LibLib {
 
     public static void setPlayerDataManager(PlayerDataManager newPlayerDataManager) {
         PLAYER_DATA_MANAGER = newPlayerDataManager;
+    }
+
+    public static BlablaLibAPI getBlablaLibAPI() {
+        return BLABLALIB_API;
+    }
+
+    public static void setBlablaLibAPI(BlablaLibAPI api) {
+        BLABLALIB_API = api;
+    }
+
+    public static QuestsLibAPI getQuestsLibAPI() {
+        return QUESTSLIB_API;
+    }
+
+    public static void setQuestsLibAPI(QuestsLibAPI api) {
+        QUESTSLIB_API = api;
     }
 
     public static Logger getLogger() {
