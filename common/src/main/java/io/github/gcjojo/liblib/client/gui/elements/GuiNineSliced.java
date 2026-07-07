@@ -1,5 +1,6 @@
 package io.github.gcjojo.liblib.client.gui.elements;
 
+import io.github.gcjojo.liblib.LibLib;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -9,6 +10,10 @@ import net.minecraft.resources.ResourceLocation;
 @Getter
 @Setter
 public class GuiNineSliced extends GuiElement {
+    public static final ResourceLocation BARS_ATLAS = ResourceLocation.tryParse("textures/gui/bars.png");
+    public static final ResourceLocation WIDGETS_ATLAS = ResourceLocation.tryParse("textures/gui/widgets.png");
+
+
     protected ResourceLocation atlasLocation;
     protected int x;
     protected int y;
@@ -56,7 +61,11 @@ public class GuiNineSliced extends GuiElement {
 
     @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
-        graphics.blitNineSliced(atlasLocation, x, y, nineSliceWidth, nineSliceHeight, sliceWidth, sliceHeight, uWidth, vHeight, textureX, textureY);
+        try {
+            graphics.blitNineSliced(atlasLocation, x, y, nineSliceWidth, nineSliceHeight, sliceWidth, sliceHeight, uWidth, vHeight, textureX, textureY);
+        } catch (ArithmeticException e) {
+            LibLib.getLogger().warn("Error when drawing GuiNineSliced");
+        }
     }
 
     @Override

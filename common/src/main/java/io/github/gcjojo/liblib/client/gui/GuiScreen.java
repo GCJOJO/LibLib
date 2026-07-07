@@ -14,6 +14,7 @@ import java.util.List;
 public class GuiScreen extends Screen {
     List<GuiElement> elements = new ArrayList<>();
     boolean renderBackground = true;
+    int currentTick = 0;
 
     public GuiScreen(Component component) {
         super(component);
@@ -52,6 +53,7 @@ public class GuiScreen extends Screen {
 
     @Override
     public void tick() {
+        currentTick++;
         elements.forEach(GuiElement::tick);
     }
 

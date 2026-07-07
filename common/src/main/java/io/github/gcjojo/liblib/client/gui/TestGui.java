@@ -14,6 +14,9 @@ public class TestGui extends GuiScreen {
     GuiButton activeButton;
     GuiButton inactiveButton;
     GuiBoxContainer boxContainer;
+    GuiProgressBar progressBar;
+
+    int seconds = 0;
 
     public TestGui(Component component) {
         super(component);
@@ -65,6 +68,11 @@ public class TestGui extends GuiScreen {
         }
 
         addElement(boxContainer);
+
+        progressBar = new GuiProgressBar(this, 0, 50, 25, 6, this.width / 2, GuiProgressBar.ProgressBarDirection.Horizontal, GuiProgressBar.BarColor.Green, GuiProgressBar.BarColor.DarkPurple);
+        progressBar.setPosition(new Vec2(this.width * 0.5f - progressBar.getLength() * 0.5f, this.height * 0.95f));
+
+        addElement(progressBar);
     }
 
     @Override
@@ -72,5 +80,10 @@ public class TestGui extends GuiScreen {
         super.tick();
         helloWorldText.setAngle(helloWorldText.getAngle() + 0.25f);
         dirtImage.setAngle(dirtImage.getAngle() - 0.25f);
+
+        if (currentTick % 20 == 0) seconds++;
+
+        float progressBar2Value = progressBar.getStartValue() + (float) Math.cos(getCurrentTick() * 0.10) * Math.abs(progressBar.getStartValue() - progressBar.getEndValue());
+        progressBar.setCurrentValue(progressBar2Value);
     }
 }

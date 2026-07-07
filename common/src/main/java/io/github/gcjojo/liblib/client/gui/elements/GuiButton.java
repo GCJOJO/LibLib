@@ -5,23 +5,20 @@ import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 import org.lwjgl.glfw.GLFW;
 
 @Getter
 @Setter
 public class GuiButton extends GuiElement {
-    protected static final ResourceLocation WIDGETS_LOCATION = new ResourceLocation("textures/gui/widgets.png");
-
     protected GuiText text;
     protected GuiNineSliced inactiveNineSlice;
     protected GuiNineSliced activeNineSlice;
     protected GuiNineSliced hoveredNineSlice;
 
     protected int textPadding = 10;
-    protected int buttonWidth;
-    protected int buttonHeight;
+    protected int buttonWidth = 0;
+    protected int buttonHeight = 0;
 
     protected boolean isActive = true;
     protected GuiButtonClicked callback = null;
@@ -48,9 +45,9 @@ public class GuiButton extends GuiElement {
         int posX = (int) (-buttonWidth * 0.5f);
         int posY = (int) (-buttonHeight * 0.5f);
 
-        inactiveNineSlice = new GuiNineSliced(screen, WIDGETS_LOCATION, posX, posY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(0));
-        activeNineSlice = new GuiNineSliced(screen, WIDGETS_LOCATION, posX, posY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(1));
-        hoveredNineSlice = new GuiNineSliced(screen, WIDGETS_LOCATION, posX, posY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(2));
+        inactiveNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, posX, posY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(0));
+        activeNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, posX, posY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(1));
+        hoveredNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, posX, posY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(2));
     }
 
     public int getMinimumButtonWidth() {
@@ -59,6 +56,14 @@ public class GuiButton extends GuiElement {
 
     public int getMinimumButtonHeight() {
         return (int) text.getContentsHeight() + textPadding;
+    }
+
+    public void setButtonWidth(float newWidth) {
+        buttonWidth = (int) Math.max(newWidth, getMinimumButtonWidth());
+    }
+
+    public void setButtonHeight(float newHeight) {
+        buttonHeight = (int) Math.max(newHeight, getMinimumButtonHeight());
     }
 
     @Override
@@ -89,7 +94,14 @@ public class GuiButton extends GuiElement {
 
     @Override
     public void tick() {
+        inactiveNineSlice.setSliceWidth(getButtonWidth());
+        inactiveNineSlice.setSliceHeight(getButtonHeight());
 
+        activeNineSlice.setSliceWidth(getButtonWidth());
+        activeNineSlice.setSliceHeight(getButtonHeight());
+
+        hoveredNineSlice.setSliceWidth(getButtonWidth());
+        hoveredNineSlice.setSliceHeight(getButtonHeight());
     }
 
     @Override

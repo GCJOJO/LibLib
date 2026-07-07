@@ -5,13 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 
 @Getter
 @Setter
 public class GuiSlider extends GuiElement {
-    protected final ResourceLocation BARS_ATLAS = ResourceLocation.tryParse("textures/gui/bars.png");
     protected int thickness;
     protected int length;
     protected float startValue;
@@ -60,12 +58,12 @@ public class GuiSlider extends GuiElement {
 
         switch (this.direction) {
             case Vertical -> {
-                sliderButton = new GuiNineSliced(this.screen, BARS_ATLAS, 0, 0, thickness, buttonLength, 2, 2, 182, 5, 0, 65);
-                sliderBackground = new GuiNineSliced(this.screen, BARS_ATLAS, 0, 0, thickness, length + buttonLength, 2, 2, 182, 5, 0, 60);
+                sliderButton = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, thickness, buttonLength, 2, 2, 182, 5, 0, 65);
+                sliderBackground = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, thickness, length + buttonLength, 2, 2, 182, 5, 0, 60);
             }
             case Horizontal -> {
-                sliderButton = new GuiNineSliced(this.screen, BARS_ATLAS, 0, 0, buttonLength, thickness, 2, 2, 182, 5, 0, 65);
-                sliderBackground = new GuiNineSliced(this.screen, BARS_ATLAS, 0, 0, length + buttonLength, thickness, 2, 2, 182, 5, 0, 60);
+                sliderButton = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, buttonLength, thickness, 2, 2, 182, 5, 0, 65);
+                sliderBackground = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, length + buttonLength, thickness, 2, 2, 182, 5, 0, 60);
             }
         }
     }
