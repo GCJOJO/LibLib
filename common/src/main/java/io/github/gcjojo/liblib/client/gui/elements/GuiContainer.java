@@ -44,6 +44,11 @@ public abstract class GuiContainer extends GuiElement {
         onChildrenUpdate();
     }
 
+    public void clearChildren() {
+        children.clear();
+        onChildrenUpdate();
+    }
+
     @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         graphics.enableScissor((int) this.position.x, (int) this.position.y, (int) this.position.x + containerWidth, (int) this.position.y + containerHeight);
