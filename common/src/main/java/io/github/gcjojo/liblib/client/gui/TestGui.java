@@ -81,14 +81,14 @@ public class TestGui extends GuiScreen {
         Tween<Vec2> posTween = TweenManager.createTween(TweenManager.TweenSide.CLIENT, progressBar::getPosition, progressBar::setPosition, Interpolator.VEC2)
                 .values(new Vec2(this.width * 0.5f - progressBar.getLength() * 0.5f, this.height + 100), new Vec2(this.width * 0.5f - progressBar.getLength() * 0.5f, this.height * 0.95f))
                 .duration(2.0f)
-                .easing(Easing.EASE_IN_OUT_CUBIC)
+                .easing(Easing.Cubic.EASE_IN_OUT)
                 .play();
 
         Tween<Float> sliderContainerTween =
                 TweenManager.createTween(TweenManager.TweenSide.CLIENT, boxContainer::getSliderValue, boxContainer::setSliderValue, Interpolator.FLOAT)
                         .values(0.0f, 0.50f)
                         .duration(2.0f)
-                        .easing(Easing.EASE_IN_OUT_CUBIC)
+                        .easing(Easing.Cubic.EASE_IN_OUT)
                         .play();
     }
 

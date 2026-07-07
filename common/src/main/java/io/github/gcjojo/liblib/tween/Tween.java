@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+//Merci ClaudeSlop
 @Getter
 public class Tween<T> {
     private final Supplier<T> getter;
