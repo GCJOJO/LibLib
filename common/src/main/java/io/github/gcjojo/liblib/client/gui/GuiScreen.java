@@ -1,6 +1,7 @@
 package io.github.gcjojo.liblib.client.gui;
 
 import io.github.gcjojo.liblib.client.gui.elements.GuiElement;
+import io.github.gcjojo.liblib.tween.TweenManager;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -45,6 +46,8 @@ public class GuiScreen extends Screen {
 
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        TweenManager.updateTweens(partialTick, TweenManager.TweenSide.CLIENT);
+
         if (renderBackground)
             renderBackground(graphics);
 

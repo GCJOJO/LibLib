@@ -2,6 +2,7 @@ package io.github.gcjojo.liblib;
 
 import com.mojang.logging.LogUtils;
 import dev.architectury.event.events.client.ClientTickEvent;
+import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import io.github.gcjojo.liblib.api.BlablaLibAPI;
 import io.github.gcjojo.liblib.api.QuestsLibAPI;
@@ -9,6 +10,7 @@ import io.github.gcjojo.liblib.client.SoundPlayer;
 import io.github.gcjojo.liblib.client.gui.TestGui;
 import io.github.gcjojo.liblib.events.LibLibEvents;
 import io.github.gcjojo.liblib.factory.PlayerDataRegistry;
+import io.github.gcjojo.liblib.tween.TweenManager;
 import io.github.gcjojo.liblib.utils.PlayerDataManager;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
@@ -25,6 +27,7 @@ public final class LibLib {
             String.format("key.categories.%s", LibLib.MOD_ID)                   // translation key for the category
     );
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static long lastTick = -1;
     private static SoundPlayer SOUND_PLAYER;
     private static PlayerDataManager PLAYER_DATA_MANAGER;
 
@@ -34,6 +37,20 @@ public final class LibLib {
     public static void init() {
         LibLibEventManager.registerEvents();
         PlayerDataRegistry.register(PlayerInventorySaveData.class, PlayerInventorySaveData::new);
+
+        TickEvent.ServerLevelTick.SERVER_PRE.register((server) -> {
+            if (lastTick == -1) {
+                lastTick = System.nanoTime();
+                return;
+            }
+
+            long now = System.nanoTime();
+            // Merci claude slop pour la valeur marrante
+            float deltaTime = (float) (now - lastTick) / 1_000_000_000.0f;
+            lastTick = now;
+
+            TweenManager.updateTweens(deltaTime, TweenManager.TweenSide.SERVER);
+        });
 
         LibLibEvents.PLAYER_INVENTORY_CHANGED.register((player, inventoryDifference) -> {
             getLogger().info("{}'s inventory has changed :", player.getName().getString());

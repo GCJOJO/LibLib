@@ -4,7 +4,9 @@ import dev.architectury.platform.forge.EventBuses;
 import io.github.gcjojo.liblib.LibLib;
 import io.github.gcjojo.liblib.forge.client.ForgeSoundPlayer;
 import io.github.gcjojo.liblib.forge.utils.ForgePlayerDataManager;
+import io.github.gcjojo.liblib.tween.TweenManager;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -27,6 +29,14 @@ public final class LibLibForge {
         public static void onClientSetup(FMLClientSetupEvent event) {
             LibLib.initClient();
             LibLib.setSoundPlayer(new ForgeSoundPlayer());
+        }
+    }
+
+    @Mod.EventBusSubscriber(modid = LibLib.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+    public static class ClientModForge {
+        @SubscribeEvent
+        public static void onRenderFrame(ViewportEvent event) {
+            TweenManager.updateTweens((float) event.getPartialTick(), TweenManager.TweenSide.CLIENT);
         }
     }
 }

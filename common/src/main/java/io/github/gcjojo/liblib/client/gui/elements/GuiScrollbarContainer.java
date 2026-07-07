@@ -8,32 +8,41 @@ import net.minecraft.world.phys.Vec2;
 
 @Getter
 @Setter
-public class GuiSliderContainer extends GuiBoxContainer {
+public class GuiScrollbarContainer extends GuiBoxContainer {
     private static final int SCROLLBAR_WIDTH = 6;
     protected GuiSlider scrollbar;
 
-    public GuiSliderContainer(Screen screen, int containerWidth, int containerHeight, BoxDirection direction) {
+    public GuiScrollbarContainer(Screen screen, int containerWidth, int containerHeight, BoxDirection direction) {
         super(screen, containerWidth, containerHeight, direction);
         int length = direction == BoxDirection.Vertical ? (int) getContainerHeight() : (int) getContainerWidth();
         length = (int) (length * 0.5f);
 
-        this.scrollbar = new GuiSlider(screen, SCROLLBAR_WIDTH, length, 1, 2, 1,
+        this.scrollbar = new GuiSlider(screen, SCROLLBAR_WIDTH, length, 0, 1, 0.05f,
                 direction == BoxDirection.Vertical ? GuiSlider.SliderDirection.Vertical : GuiSlider.SliderDirection.Horizontal,
                 this::onSliderValueChanged);
     }
 
-    // Merci ClaudeSlop
-    // TODO Fix it tho it still doesn't work
-    public float getMaxScrollOffset() {
-        float contentsSize = direction == BoxDirection.Vertical ? getContentsHeight() : getContentsWidth();
-        float containerSize = direction == BoxDirection.Vertical ? getContainerHeight() : getContainerWidth();
-        return Math.max(0.0f, contentsSize - containerSize) * 0.5f;
+    public float getSliderValue() {
+        return this.scrollbar.currentValue;
+    }
+
+    public void setSliderValue(float newValue) {
+        this.scrollbar.currentValue = newValue;
+        onSliderValueChanged(newValue);
+    }
+
+    public float getContentsSize() {
+        return direction == BoxDirection.Vertical ? getContentsHeight() : getContentsWidth();
+    }
+
+    public float getContainerSize() {
+        return direction == BoxDirection.Vertical ? getContainerHeight() : getContainerWidth();
     }
 
     @Override
     public void onChildrenUpdate() {
         super.onChildrenUpdate();
-        scrollbar.setEndValue(getMaxScrollOffset());
+        //scrollbar.setStep((float) 1 / getContentsSize());
 
         int length = direction == BoxDirection.Vertical ? this.containerHeight : this.containerWidth;
         scrollbar.setLength(length);
@@ -56,7 +65,7 @@ public class GuiSliderContainer extends GuiBoxContainer {
     public void onSliderValueChanged(float newValue) {
         if (children.isEmpty() && !doesChildrenOverflow()) return;
 
-        float newOffset = (-newValue / children.size()) * (direction == BoxDirection.Horizontal ? getContainerWidth() : getContainerHeight());
+        float newOffset = (-newValue) * (getContentsSize() - getContainerSize() * 0.9f);
         this.setChildrenOffset(newOffset);
     }
 
