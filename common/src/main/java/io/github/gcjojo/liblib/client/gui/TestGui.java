@@ -66,7 +66,9 @@ public class TestGui extends GuiScreen {
             boxContainer.addChild(childText);
         }
         for (int i = 0; i <= 25; i++) {
-            GuiButton childButton = new GuiButton(this, Component.literal(String.format("Button %s", i)));
+            String buttonName = String.format("Button %s", i);
+            GuiButton childButton = new GuiButton(this, Component.literal(buttonName), () ->
+                    LibLib.getLogger().info("Clicked on {}", buttonName));
             childButton.setDrawOffset(new Vec2(childButton.getButtonWidth() * 0.5f, childButton.getButtonHeight() * 0.5f));
             boxContainer.addChild(childButton);
         }
@@ -103,6 +105,6 @@ public class TestGui extends GuiScreen {
         float progressBar2Value = progressBar.getStartValue() + (float) Math.cos(getCurrentTick() * 0.10) * Math.abs(progressBar.getStartValue() - progressBar.getEndValue());
         progressBar.setCurrentValue(progressBar2Value);
 
-        LibLib.getLogger().info("Pos : {}, {}", progressBar.getPosition().x, progressBar.getPosition().y);
+        //LibLib.getLogger().info("Pos : {}, {}", progressBar.getPosition().x, progressBar.getPosition().y);
     }
 }

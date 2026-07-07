@@ -1,6 +1,5 @@
 package io.github.gcjojo.liblib.client.gui.elements;
 
-import io.github.gcjojo.liblib.LibLib;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -64,7 +63,7 @@ public class GuiNineSliced extends GuiElement {
         try {
             graphics.blitNineSliced(atlasLocation, x, y, nineSliceWidth, nineSliceHeight, sliceWidth, sliceHeight, uWidth, vHeight, textureX, textureY);
         } catch (ArithmeticException e) {
-            LibLib.getLogger().warn("Error when drawing GuiNineSliced");
+            //LibLib.getLogger().warn("Error when drawing GuiNineSliced");
         }
     }
 
