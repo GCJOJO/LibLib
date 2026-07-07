@@ -1,6 +1,5 @@
 package io.github.gcjojo.liblib.client.gui.elements;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -53,7 +52,7 @@ public abstract class GuiContainer extends GuiElement {
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         graphics.enableScissor((int) this.position.x, (int) this.position.y, (int) this.position.x + containerWidth, (int) this.position.y + containerHeight);
         children.forEach(child -> child.draw(graphics, mouseX - this.position.x, mouseY - this.position.y, partialTick));
-        RenderSystem.disableScissor();
+        graphics.disableScissor();
     }
 
     public abstract void onChildrenUpdate();
