@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
+// TODO Fix button width and height not repositioning the button correctly
 @Getter
 @Setter
 public class GuiButton extends GuiElement {
