@@ -6,6 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.phys.Vec2;
 
+// TODO Fix not scrolling when dragging mouse or clicking on the scrollbar
 @Getter
 @Setter
 public class GuiScrollbarContainer extends GuiBoxContainer {
