@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.phys.Vec2;
 
 @Getter
@@ -33,6 +34,11 @@ public class GuiSlider extends GuiElement {
         super(screen);
         setup(thickness, length, startValue, endValue, step, direction);
         this.sliderValueUpdated = sliderValueUpdated;
+    }
+
+    @Override
+    public Rect2i getBoundingBox() {
+        return new Rect2i(0, 0, (int) getContentsWidth(), (int) getContentsHeight());
     }
 
     private void setup(int thickness, int length, float startValue, float endValue, float step, SliderDirection direction) {
@@ -85,8 +91,8 @@ public class GuiSlider extends GuiElement {
 
     @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
-        sliderBackground.draw(graphics, mouseX, mouseY, partialTick);
-        sliderButton.draw(graphics, mouseX, mouseY, partialTick);
+        sliderBackground.draw(graphics, mouseX, mouseY, partialTick, Vec2.ZERO);
+        sliderButton.draw(graphics, mouseX, mouseY, partialTick, Vec2.ZERO);
     }
 
     @Override
@@ -104,13 +110,14 @@ public class GuiSlider extends GuiElement {
     }
 
     @Override
-    public void mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         float deltaPercentage = (float) (-delta * step);
 
         currentValue += deltaPercentage;
         currentValue = MathUtils.clamp(currentValue, startValue, endValue);
         if (this.sliderValueUpdated != null)
             this.sliderValueUpdated.onSliderValueUpdated(currentValue);
+        return true;
     }
 
     @Override
@@ -120,24 +127,26 @@ public class GuiSlider extends GuiElement {
     }
 
     @Override
-    protected void mouseClickedContent(double mouseX, double mouseY, int button) {
+    protected boolean mouseClickedContent(double mouseX, double mouseY, int button) {
         // Clicking on button
         if (sliderButton.isMouseOver(mouseX - this.position.x, mouseY - this.position.y)) {
             this.scrolling = button == 0;
-            return;
+            return true;
         }
         // Clicking on background
         this.clickBackground(mouseX - this.position.x, mouseY - this.position.y, button);
+        return true;
     }
 
     @Override
-    public void mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (button == 0)
             this.scrolling = false;
+        return true;
     }
 
     @Override
-    public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (this.scrolling) {
             float mouseSpeed = (endValue - startValue) / length;
             double moved = direction == SliderDirection.Vertical ? deltaY * mouseSpeed : deltaX * mouseSpeed;
@@ -146,6 +155,7 @@ public class GuiSlider extends GuiElement {
             if (this.sliderValueUpdated != null)
                 this.sliderValueUpdated.onSliderValueUpdated(currentValue);
         }
+        return true;
     }
 
     // Convert to a value

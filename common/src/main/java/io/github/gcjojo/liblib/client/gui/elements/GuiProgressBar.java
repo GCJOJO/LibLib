@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.world.phys.Vec2;
 
 @Getter
 @Setter
@@ -38,6 +40,11 @@ public class GuiProgressBar extends GuiElement {
     public static int getBarTextureY(BarColor color) {
         int barIndex = color.getColorY();
         return barIndex * 5;
+    }
+
+    @Override
+    public Rect2i getBoundingBox() {
+        return new Rect2i(0, 0, 0, 0);
     }
 
     public void setup(float startValue, float endValue, float currentValue, int thickness, int length, ProgressBarDirection direction) {
@@ -92,8 +99,8 @@ public class GuiProgressBar extends GuiElement {
 
     @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
-        backgroundBar.draw(graphics, mouseX - this.position.x, mouseY - this.position.y, partialTick);
-        progressBar.draw(graphics, mouseX - this.position.x, mouseY - this.position.y, partialTick);
+        backgroundBar.draw(graphics, mouseX - this.position.x, mouseY - this.position.y, partialTick, Vec2.ZERO);
+        progressBar.draw(graphics, mouseX - this.position.x, mouseY - this.position.y, partialTick, Vec2.ZERO);
     }
 
     @Override
@@ -101,7 +108,7 @@ public class GuiProgressBar extends GuiElement {
 
     }
 
-    @Override
+    /*@Override
     protected void mouseClickedContent(double mouseX, double mouseY, int button) {
         progressBar.mouseClickedContent(mouseX - this.position.x, mouseY - this.position.y, button);
         backgroundBar.mouseClickedContent(mouseX - this.position.x, mouseY - this.position.y, button);
@@ -123,7 +130,7 @@ public class GuiProgressBar extends GuiElement {
     public void mouseScrolled(double mouseX, double mouseY, double delta) {
         progressBar.mouseScrolled(mouseX - this.position.x, mouseY - this.position.y, delta);
         backgroundBar.mouseScrolled(mouseX - this.position.x, mouseY - this.position.y, delta);
-    }
+    }*/
 
     public enum ProgressBarDirection {
         Vertical,

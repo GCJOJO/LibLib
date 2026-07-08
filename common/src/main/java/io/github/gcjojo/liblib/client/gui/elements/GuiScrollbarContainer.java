@@ -50,16 +50,16 @@ public class GuiScrollbarContainer extends GuiBoxContainer {
 
         switch (direction) {
             case Horizontal -> scrollbar.setPosition(new Vec2(0, this.getContainerHeight() + SCROLLBAR_WIDTH));
-            case Vertical -> scrollbar.setPosition(new Vec2(this.getContainerWidth() + SCROLLBAR_WIDTH, 0));
+            case Vertical -> scrollbar.setPosition(new Vec2(this.getContainerWidth() * 0.5f + SCROLLBAR_WIDTH, 0));
         }
     }
 
     @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
+        scrollbar.setVisible(doesChildrenOverflow());
         super.drawContents(graphics, mouseX, mouseY, partialTick);
 
-        if (doesChildrenOverflow())
-            scrollbar.drawContents(graphics, mouseX - this.position.x, mouseY - this.position.y, partialTick);
+        scrollbar.draw(graphics, mouseX - this.position.x, mouseY - this.position.y, partialTick, Vec2.ZERO);
     }
 
     public void onSliderValueChanged(float newValue) {
@@ -80,24 +80,26 @@ public class GuiScrollbarContainer extends GuiBoxContainer {
         return super.isMouseOver(mouseX, mouseY) || scrollbar.isMouseOver(mouseX, mouseY);
     }
 
-    public void mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (isMouseOver(mouseX, mouseY)) {
             if (scrollbar.isMouseOver(mouseX, mouseY))
-                scrollbar.mouseClickedContent(mouseX, mouseY, button);
-            else
-                mouseClickedContent(mouseX, mouseY, button);
+                return scrollbar.mouseClickedContent(mouseX, mouseY, button);
+            return mouseClickedContent(mouseX, mouseY, button);
         }
+        return false;
     }
 
     @Override
-    public void mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if (doesChildrenOverflow())
-            scrollbar.mouseScrolled(mouseX, mouseY, delta);
+            return scrollbar.mouseScrolled(mouseX, mouseY, delta);
+        return false;
     }
 
     @Override
-    public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         if (doesChildrenOverflow())
-            scrollbar.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+            return scrollbar.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return false;
     }
 }

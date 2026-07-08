@@ -6,6 +6,7 @@ import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class GuiScreen extends Screen {
         if (renderBackground)
             renderBackground(graphics);
 
-        elements.forEach(element -> element.draw(graphics, mouseX, mouseY, partialTick));
+        elements.forEach(element -> element.draw(graphics, mouseX, mouseY, partialTick, Vec2.ZERO));
     }
 
     @Override
@@ -62,28 +63,42 @@ public class GuiScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        elements.forEach(element -> element.mouseClicked(mouseX, mouseY, button));
+        for (int i = elements.size() - 1; i >= 0; i--) {
+            GuiElement element = elements.get(i);
+            if (element.mouseClicked(mouseX, mouseY, button)) return true;
+        }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        elements.forEach(element -> element.mouseReleased(mouseX, mouseY, button));
+        for (int i = elements.size() - 1; i >= 0; i--) {
+            GuiElement element = elements.get(i);
+            if (element.mouseReleased(mouseX, mouseY, button)) return true;
+        }
+
         return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        elements.forEach(element -> element.mouseDragged(mouseX, mouseY, button, deltaX, deltaY));
+        for (int i = elements.size() - 1; i >= 0; i--) {
+            GuiElement element = elements.get(i);
+            if (element.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) return true;
+        }
+
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
-        elements.forEach(element -> {
+        for (int i = elements.size() - 1; i >= 0; i--) {
+            GuiElement element = elements.get(i);
             if (element.isMouseOver(mouseX, mouseY))
-                element.mouseScrolled(mouseX, mouseY, scroll);
-        });
+                if (element.mouseScrolled(mouseX, mouseY, scroll))
+                    return true;
+        }
 
         return super.mouseScrolled(mouseX, mouseY, scroll);
     }

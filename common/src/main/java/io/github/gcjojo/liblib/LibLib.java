@@ -8,6 +8,7 @@ import io.github.gcjojo.liblib.api.BlablaLibAPI;
 import io.github.gcjojo.liblib.api.QuestsLibAPI;
 import io.github.gcjojo.liblib.client.SoundPlayer;
 import io.github.gcjojo.liblib.client.gui.TestGui;
+import io.github.gcjojo.liblib.client.gui.elements.GuiElement;
 import io.github.gcjojo.liblib.events.LibLibEvents;
 import io.github.gcjojo.liblib.factory.PlayerDataRegistry;
 import io.github.gcjojo.liblib.tween.TweenManager;
@@ -22,10 +23,26 @@ import java.util.Arrays;
 public final class LibLib {
     public static final String MOD_ID = "liblib";
     public static final KeyMapping TEST_SCREEN_KEY = new KeyMapping(
-            String.format("key.%s.open_test_screen", LibLib.MOD_ID),            // translation key for the binding's name
-            GLFW.GLFW_KEY_K,                                                    // default key
-            String.format("key.categories.%s", LibLib.MOD_ID)                   // translation key for the category
+            String.format("key.%s.open_test_screen", LibLib.MOD_ID),
+            GLFW.GLFW_KEY_K,
+            String.format("key.categories.%s", LibLib.MOD_ID)
     );
+    public static final KeyMapping TOGGLE_GUI_PIVOT_KEY = new KeyMapping(
+            String.format("key.%s.toggle_gui_pivot_drawing", LibLib.MOD_ID),
+            GLFW.GLFW_KEY_O,
+            String.format("key.categories.%s", LibLib.MOD_ID)
+    );
+    public static final KeyMapping TOGGLE_GUI_BOUNDING_BOX_KEY = new KeyMapping(
+            String.format("key.%s.toggle_gui_bounding_box_drawing", LibLib.MOD_ID),
+            GLFW.GLFW_KEY_L,
+            String.format("key.categories.%s", LibLib.MOD_ID)
+    );
+    public static final KeyMapping TOGGLE_GUI_SCISSORS_KEY = new KeyMapping(
+            String.format("key.%s.toggle_gui_scissors_drawing", LibLib.MOD_ID),
+            GLFW.GLFW_KEY_M,
+            String.format("key.categories.%s", LibLib.MOD_ID)
+    );
+
     private static final Logger LOGGER = LogUtils.getLogger();
     private static long lastTick = -1;
     private static SoundPlayer SOUND_PLAYER;
@@ -60,11 +77,20 @@ public final class LibLib {
 
     public static void initClient() {
         KeyMappingRegistry.register(TEST_SCREEN_KEY);
+        KeyMappingRegistry.register(TOGGLE_GUI_PIVOT_KEY);
+        KeyMappingRegistry.register(TOGGLE_GUI_BOUNDING_BOX_KEY);
+        KeyMappingRegistry.register(TOGGLE_GUI_SCISSORS_KEY);
 
         ClientTickEvent.CLIENT_POST.register(minecraft -> {
             while (TEST_SCREEN_KEY.consumeClick()) {
                 minecraft.setScreen(new TestGui(Component.literal("Test GUI")));
             }
+            while (TOGGLE_GUI_PIVOT_KEY.consumeClick())
+                GuiElement.DEBUG_DRAW_PIVOT_POINT = !GuiElement.DEBUG_DRAW_PIVOT_POINT;
+            while (TOGGLE_GUI_BOUNDING_BOX_KEY.consumeClick())
+                GuiElement.DEBUG_DRAW_BOUNDING_BOX = !GuiElement.DEBUG_DRAW_BOUNDING_BOX;
+            while (TOGGLE_GUI_SCISSORS_KEY.consumeClick())
+                GuiElement.DEBUG_DRAW_SCISSORS = !GuiElement.DEBUG_DRAW_SCISSORS;
         });
     }
 

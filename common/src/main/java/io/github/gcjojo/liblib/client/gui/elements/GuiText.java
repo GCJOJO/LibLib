@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 
 @Getter
@@ -24,6 +25,11 @@ public class GuiText extends GuiElement {
         this.horizontalAlignment = TextHorizontalAlignment.Left;
         this.verticalAlignment = TextVerticalAlignment.Top;
         this.color = Color.WHITE;
+    }
+
+    @Override
+    public Rect2i getBoundingBox() {
+        return new Rect2i(0, 0, 0, 0);
     }
 
     @Override
@@ -68,26 +74,6 @@ public class GuiText extends GuiElement {
 
     @Override
     public void tick() {
-
-    }
-
-    @Override
-    public void mouseScrolled(double mouseX, double mouseY, double delta) {
-
-    }
-
-    @Override
-    protected void mouseClickedContent(double mouseX, double mouseY, int button) {
-
-    }
-
-    @Override
-    public void mouseReleased(double mouseX, double mouseY, int button) {
-
-    }
-
-    @Override
-    public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
 
     }
 

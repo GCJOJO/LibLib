@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec2;
 
 @Getter
 @Setter
@@ -14,8 +16,6 @@ public class GuiNineSliced extends GuiElement {
 
 
     protected ResourceLocation atlasLocation;
-    protected int x;
-    protected int y;
     protected int nineSliceWidth;
     protected int nineSliceHeight;
     protected int sliceWidth;
@@ -31,8 +31,7 @@ public class GuiNineSliced extends GuiElement {
                          int textureX, int textureY) {
         super(screen);
         this.atlasLocation = atlasLocation;
-        this.x = x;
-        this.y = y;
+        this.setPosition(new Vec2(x, y));
         this.nineSliceWidth = nineSliceWidth;
         this.nineSliceHeight = nineSliceHeight;
         this.sliceWidth = sliceWidth;
@@ -41,6 +40,11 @@ public class GuiNineSliced extends GuiElement {
         this.vHeight = vHeight;
         this.textureX = textureX;
         this.textureY = textureY;
+    }
+
+    @Override
+    public Rect2i getBoundingBox() {
+        return new Rect2i(0, 0, 0, 0);
     }
 
     @Override
@@ -61,7 +65,7 @@ public class GuiNineSliced extends GuiElement {
     @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         try {
-            graphics.blitNineSliced(atlasLocation, x, y, nineSliceWidth, nineSliceHeight, sliceWidth, sliceHeight, uWidth, vHeight, textureX, textureY);
+            graphics.blitNineSliced(atlasLocation, 0, 0, nineSliceWidth, nineSliceHeight, sliceWidth, sliceHeight, uWidth, vHeight, textureX, textureY);
         } catch (ArithmeticException e) {
             //LibLib.getLogger().warn("Error when drawing GuiNineSliced");
         }
@@ -69,26 +73,6 @@ public class GuiNineSliced extends GuiElement {
 
     @Override
     public void tick() {
-
-    }
-
-    @Override
-    public void mouseScrolled(double mouseX, double mouseY, double delta) {
-
-    }
-
-    @Override
-    protected void mouseClickedContent(double mouseX, double mouseY, int button) {
-
-    }
-
-    @Override
-    public void mouseReleased(double mouseX, double mouseY, int button) {
-
-    }
-
-    @Override
-    public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
 
     }
 }

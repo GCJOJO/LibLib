@@ -9,6 +9,8 @@ import net.minecraft.world.phys.Vec2;
 @Setter
 public class GuiBoxContainer extends GuiContainer {
     protected BoxDirection direction;
+    protected float childrenMargin = 5.0f;
+
     protected float childrenOffset = 0.0f;
     protected boolean childrenDirty = false;
 
@@ -30,7 +32,7 @@ public class GuiBoxContainer extends GuiContainer {
 
         float width = 0.0f;
         for (int i = 0; i <= children.size() - 1; i++) {
-            width += children.get(i).getWidth();
+            width += children.get(i).getWidth() + getChildrenMargin();
         }
 
         return width;
@@ -49,7 +51,7 @@ public class GuiBoxContainer extends GuiContainer {
 
         float height = 0.0f;
         for (int i = 0; i <= children.size() - 1; i++) {
-            height += children.get(i).getHeight();
+            height += children.get(i).getHeight() + getChildrenMargin();
         }
 
         return height;
@@ -66,31 +68,6 @@ public class GuiBoxContainer extends GuiContainer {
             recalculateChildrenPosition();
 
         children.forEach(GuiElement::tick);
-    }
-
-    @Override
-    public void mouseScrolled(double mouseX, double mouseY, double delta) {
-
-    }
-
-    @Override
-    protected void mouseClickedContent(double mouseX, double mouseY, int button) {
-        children.forEach(element -> {
-            double localMouseX = mouseX - this.position.x;
-            double localMouseY = mouseY - this.position.y;
-            if (element.isMouseOver(localMouseX, localMouseY))
-                element.mouseClickedContent(localMouseX, localMouseY, button);
-        });
-    }
-
-    @Override
-    public void mouseReleased(double mouseX, double mouseY, int button) {
-
-    }
-
-    @Override
-    public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-
     }
 
     public boolean doesChildrenOverflow() {
@@ -112,13 +89,13 @@ public class GuiBoxContainer extends GuiContainer {
 
             switch (direction) {
                 case Horizontal -> {
-                    newPosition = new Vec2(position.x + offset, position.y);
-                    offset += child.getContentsWidth();
+                    newPosition = new Vec2(position.x + offset, 0);
+                    offset += child.getContentsWidth() + childrenMargin;
                     break;
                 }
                 case Vertical -> {
-                    newPosition = new Vec2(position.x, position.y + offset);
-                    offset += child.getContentsHeight();
+                    newPosition = new Vec2(0, position.y + offset);
+                    offset += child.getContentsHeight() + childrenMargin;
                     break;
                 }
             }

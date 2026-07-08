@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.phys.Vec2;
 import org.lwjgl.glfw.GLFW;
 
 @Getter
@@ -34,6 +34,12 @@ public class GuiButton extends GuiElement {
         this.callback = callback;
     }
 
+    @Override
+    public Rect2i getBoundingBox() {
+        //return new Rect2i((int) (-buttonWidth * 0.5f), (int) (-buttonHeight * 0.5f), (int) (buttonWidth), (int) (buttonHeight));
+        return new Rect2i(-1, 0, (int) (buttonWidth * 0.5f) + 1, (int) (buttonHeight * 0.5f) + 2);
+    }
+
     private void setup(Component textContents) {
         text = new GuiText(screen, textContents);
         text.setHorizontalAlignment(GuiText.TextHorizontalAlignment.Center);
@@ -42,12 +48,21 @@ public class GuiButton extends GuiElement {
         buttonWidth = getMinimumButtonWidth();
         buttonHeight = getMinimumButtonHeight();
 
-        int posX = (int) (-buttonWidth * 0.5f);
-        int posY = (int) (-buttonHeight * 0.5f);
+        int buttonX = (int) (-buttonWidth * 0.5f);
+        int buttonY = (int) (-buttonHeight * 0.5f);
 
-        inactiveNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, posX, posY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(0));
-        activeNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, posX, posY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(1));
-        hoveredNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, posX, posY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(2));
+        inactiveNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, buttonX, buttonY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(0));
+        activeNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, buttonX, buttonY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(1));
+        hoveredNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, buttonX, buttonY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(2));
+
+        inactiveNineSlice.setVisible(false);
+        activeNineSlice.setVisible(false);
+        hoveredNineSlice.setVisible(false);
+
+        addChild(inactiveNineSlice);
+        addChild(activeNineSlice);
+        addChild(hoveredNineSlice);
+        addChild(text);
     }
 
     public int getMinimumButtonWidth() {
@@ -83,57 +98,41 @@ public class GuiButton extends GuiElement {
 
     @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
-        if (!isActive())
-            inactiveNineSlice.draw(graphics, mouseX, mouseY, partialTick);
-        else if (isMouseOver(mouseX, mouseY))
-            hoveredNineSlice.draw(graphics, mouseX, mouseY, partialTick);
-        else
-            activeNineSlice.draw(graphics, mouseX, mouseY, partialTick);
-        text.draw(graphics, mouseX, mouseY, partialTick);
+        if (isMouseOver(mouseX, mouseY) && isActive) {
+            activeNineSlice.setVisible(false);
+            hoveredNineSlice.setVisible(true);
+        } else if (isActive) {
+            activeNineSlice.setVisible(true);
+            hoveredNineSlice.setVisible(false);
+        } else {
+            inactiveNineSlice.setVisible(true);
+            activeNineSlice.setVisible(false);
+            hoveredNineSlice.setVisible(false);
+        }
     }
 
     @Override
     public void tick() {
-        inactiveNineSlice.setSliceWidth(getButtonWidth());
-        inactiveNineSlice.setSliceHeight(getButtonHeight());
+        inactiveNineSlice.setNineSliceWidth(getButtonWidth());
+        inactiveNineSlice.setNineSliceHeight(getButtonHeight());
 
-        activeNineSlice.setSliceWidth(getButtonWidth());
-        activeNineSlice.setSliceHeight(getButtonHeight());
+        activeNineSlice.setNineSliceWidth(getButtonWidth());
+        activeNineSlice.setNineSliceHeight(getButtonHeight());
 
-        hoveredNineSlice.setSliceWidth(getButtonWidth());
-        hoveredNineSlice.setSliceHeight(getButtonHeight());
+        hoveredNineSlice.setNineSliceWidth(getButtonWidth());
+        hoveredNineSlice.setNineSliceHeight(getButtonHeight());
     }
 
-    @Override
-    public boolean isMouseOver(double mouseX, double mouseY) {
-        int posX = (int) (-buttonWidth * 0.5f);
-        int posY = (int) (-buttonHeight * 0.5f);
-
-        Vec2 localPos = screenToLocal(new Vec2((float) mouseX, (float) mouseY));
-        return localPos.x >= posX + drawOffset.x + position.x && localPos.x <= posX + drawOffset.x + position.x + getWidth() &&
-                localPos.y >= posY + drawOffset.y + position.y && localPos.y <= posY + drawOffset.y + position.y + getHeight();
-    }
 
     @Override
-    public void mouseScrolled(double mouseX, double mouseY, double delta) {
-
-    }
-
-    @Override
-    protected void mouseClickedContent(double mouseX, double mouseY, int button) {
-        if (button == GLFW.GLFW_MOUSE_BUTTON_1 && callback != null)
+    protected boolean mouseClickedContent(double mouseX, double mouseY, int button) {
+        if (button == GLFW.GLFW_MOUSE_BUTTON_1 && callback != null) {
             callback.onGuiButtonClicked();
+            return true;
+        }
+        return super.mouseClickedContent(mouseX, mouseY, button);
     }
 
-    @Override
-    public void mouseReleased(double mouseX, double mouseY, int button) {
-
-    }
-
-    @Override
-    public void mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-
-    }
 
     private int getAtlasTextureY(int id) {
         return 46 + id * 20;
