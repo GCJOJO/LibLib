@@ -27,11 +27,10 @@ public abstract class GuiContainer extends GuiElement {
     // TODO Fix bounds going in wrong direction
     @Override
     public Rect2i getBoundingBox() {
-        return new Rect2i((int) (containerWidth * 0.5f), (int) (containerHeight * 0.5f), containerWidth, containerHeight);
+        return new Rect2i((int) (containerWidth * 0.5f), (int) (containerHeight * 0.5f), (int) (containerWidth * 0.5f), (int) (containerHeight * 0.5f));
     }
 
     @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
-
     }
 }

@@ -49,8 +49,8 @@ public class GuiScrollbarContainer extends GuiBoxContainer {
         scrollbar.refresh();
 
         switch (direction) {
-            case Horizontal -> scrollbar.setPosition(new Vec2(0, this.getContainerHeight() + SCROLLBAR_WIDTH));
-            case Vertical -> scrollbar.setPosition(new Vec2(this.getContainerWidth() * 0.5f + SCROLLBAR_WIDTH, 0));
+            case Horizontal -> scrollbar.setPosition(new Vec2(0, this.getContainerHeight()));
+            case Vertical -> scrollbar.setPosition(new Vec2(this.getContainerWidth() * 0.5f, 0));
         }
     }
 
@@ -59,7 +59,7 @@ public class GuiScrollbarContainer extends GuiBoxContainer {
         scrollbar.setVisible(doesChildrenOverflow());
         super.drawContents(graphics, mouseX, mouseY, partialTick);
 
-        scrollbar.draw(graphics, mouseX - this.position.x, mouseY - this.position.y, partialTick, Vec2.ZERO);
+        scrollbar.draw(graphics, mouseX - this.position.x, mouseY - this.position.y, partialTick, this.position);
     }
 
     public void onSliderValueChanged(float newValue) {

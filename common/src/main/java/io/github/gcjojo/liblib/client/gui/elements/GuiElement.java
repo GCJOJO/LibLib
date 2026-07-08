@@ -57,6 +57,13 @@ public abstract class GuiElement {
         return new Rect2i(0, 0, (int) getWidth(), (int) getHeight());
     }
 
+    private Rect2i calculatePositionedBoundingBox() {
+        Vec2 drawingPosition = new Vec2(drawOffset.x + position.x, drawOffset.y + position.y);
+        Rect2i boundingBox = getBoundingBox();
+        return new Rect2i((int) (drawingPosition.x + boundingBox.getX() - boundingBox.getWidth()), (int) (drawingPosition.y + boundingBox.getY() - boundingBox.getHeight()),
+                (int) (drawingPosition.x + boundingBox.getX() + boundingBox.getWidth()), (int) (drawingPosition.y + boundingBox.getY() + boundingBox.getHeight()));
+    }
+
     public void draw(GuiGraphics graphics, double mouseX, double mouseY, float partialTick, Vec2 parentPosition) {
         if (!isVisible() || color.alpha < 8) return;
         if (color.alpha >= 255) color.alpha = 255;
@@ -88,14 +95,16 @@ public abstract class GuiElement {
         poseStack.scale(scale.x, scale.y, 1.0f);
         //Merci ClaudeSlop
         poseStack.rotateAround(Axis.ZP.rotationDegrees(angle), rotationPivotX, rotationPivotY, 0.0f);
-        drawContents(graphics, mouseX, mouseY, partialTick);
+        drawContents(graphics, mouseX - parentPosition.x, mouseY - parentPosition.y, partialTick);
 
-        Vec2 finalPosition = new Vec2(drawOffset.x + position.x + parentPosition.x, drawOffset.y + position.y + parentPosition.y);
-        graphics.enableScissor((int) (finalPosition.x - getBoundingBox().getWidth()), (int) (finalPosition.y - getBoundingBox().getHeight()),
-                (int) (finalPosition.x + getBoundingBox().getWidth()), (int) (finalPosition.y + getBoundingBox().getHeight()));
+        Vec2 drawingPosition = new Vec2(drawOffset.x + position.x + parentPosition.x, drawOffset.y + position.y + parentPosition.y);
+        Rect2i positionedBoundingBox = calculatePositionedBoundingBox();
+        graphics.enableScissor((int) (parentPosition.x + positionedBoundingBox.getX()), (int) (parentPosition.y + positionedBoundingBox.getY()),
+                (int) (parentPosition.x + positionedBoundingBox.getWidth()), (int) (parentPosition.y + positionedBoundingBox.getHeight()));
+
         try {
             children.forEach(child -> {
-                child.draw(graphics, mouseX, mouseY, partialTick, new Vec2(finalPosition.x, finalPosition.y));
+                child.draw(graphics, mouseX, mouseY, partialTick, new Vec2(drawingPosition.x, drawingPosition.y));
             });
         } finally {
             graphics.disableScissor();
@@ -104,13 +113,11 @@ public abstract class GuiElement {
 
         poseStack.popPose();
         if (DEBUG_DRAW_BOUNDING_BOX) {
-            graphics.fill((int) (drawOffset.x + this.position.x - getBoundingBox().getWidth()), (int) (drawOffset.y + this.position.y - getBoundingBox().getHeight()),
-                    (int) (drawOffset.x + this.position.x + getBoundingBox().getWidth()), (int) (drawOffset.y + this.position.y + getBoundingBox().getHeight()), 0xAA00FFFF);
+            graphics.fill(positionedBoundingBox.getX(), positionedBoundingBox.getY(), positionedBoundingBox.getWidth(), positionedBoundingBox.getHeight(), 0xAA00FFFF);
         }
 
         if (DEBUG_DRAW_SCISSORS) {
-            graphics.fill((int) (drawOffset.x + this.position.x - getBoundingBox().getWidth()), (int) (drawOffset.y + this.position.y - getBoundingBox().getHeight()),
-                    (int) (drawOffset.x + this.position.x + getBoundingBox().getWidth()), (int) (drawOffset.y + this.position.y + getBoundingBox().getHeight()), 0xAAFF00FF);
+            graphics.fill(positionedBoundingBox.getX(), positionedBoundingBox.getY(), positionedBoundingBox.getWidth(), positionedBoundingBox.getHeight(), 0xAAFF00FF);
         }
 
         if (supportsShaderColor() && color.alpha != 255)
@@ -197,9 +204,10 @@ public abstract class GuiElement {
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
-        //return getBoundingBox().contains((int) (mouseX - this.position.x), (int) (mouseY - this.position.y));
-        return mouseX >= drawOffset.x + this.position.x - getBoundingBox().getWidth() && mouseX <= drawOffset.x + this.position.x + getBoundingBox().getWidth() &&
-                mouseY >= drawOffset.y + this.position.y - getBoundingBox().getHeight() && mouseY <= drawOffset.y + this.position.y + getBoundingBox().getHeight();
+        //return calculatePositionedBoundingBox().contains((int) mouseX, (int) mouseY * 2);
+        Rect2i positionedBoundingBox = calculatePositionedBoundingBox();
+        return mouseX >= positionedBoundingBox.getX() && mouseX <= positionedBoundingBox.getWidth() &&
+                mouseY >= positionedBoundingBox.getY() && mouseY <= positionedBoundingBox.getHeight();
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {

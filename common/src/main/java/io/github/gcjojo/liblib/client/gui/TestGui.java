@@ -61,8 +61,8 @@ public class TestGui extends GuiScreen {
         addElement(inactiveButton);
 
         boxContainer = new GuiScrollbarContainer(this, (int) (this.width * 0.12f), (int) (this.height * 0.4f), GuiBoxContainer.BoxDirection.Vertical);
-        //boxContainer.setPosition(new Vec2(10, 10));
-        boxContainer.setPosition(new Vec2((int) (this.width * 0.5f), (int) (this.height * 0.5f)));
+        boxContainer.setPosition(new Vec2(10, 10));
+        //boxContainer.setPosition(new Vec2((int) (this.width * 0.5f), (int) (this.height * 0.5f)));
         for (int i = 0; i <= 24; i++) {
             GuiText childText = new GuiText(this, Component.literal(String.format("Text %s", i)));
             boxContainer.addChild(childText);
@@ -77,14 +77,14 @@ public class TestGui extends GuiScreen {
 
         addElement(boxContainer);
 
-        /*boxContainer2 = new GuiScrollbarContainer(this, (int) (this.width * 0.12f), (int) (this.height * 0.4f), GuiBoxContainer.BoxDirection.Vertical);
+        boxContainer2 = new GuiScrollbarContainer(this, (int) (this.width * 0.12f), (int) (this.height * 0.4f), GuiBoxContainer.BoxDirection.Vertical);
         boxContainer2.setPosition(new Vec2(10, this.height * 0.5f));
 
         for (int i = 0; i <= 25; i++) {
             GuiText childText = new GuiText(this, Component.literal(String.format("Text %s", i)));
             boxContainer2.addChild(childText);
         }
-        addElement(boxContainer2);*/
+        addElement(boxContainer2);
 
         progressBar = new GuiProgressBar(this, 0, 50, 25, 6, this.width / 2, GuiProgressBar.ProgressBarDirection.Horizontal, GuiProgressBar.BarColor.Green, GuiProgressBar.BarColor.DarkPurple);
         //progressBar.setPosition(new Vec2(this.width * 0.5f - progressBar.getLength() * 0.5f, this.height * 0.95f));

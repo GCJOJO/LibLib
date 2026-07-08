@@ -62,12 +62,23 @@ public class GuiBoxContainer extends GuiContainer {
         return false;
     }
 
+    public boolean isChildrenVisible(GuiElement child) {
+        if (direction == BoxDirection.Horizontal)
+            return child.position.x + child.getWidth() >= 0 && child.position.x <= this.getContainerWidth();
+        return child.position.y + child.getHeight() >= 0 && child.position.y <= this.getContainerHeight();
+    }
+
     @Override
     public void tick() {
         if (childrenDirty)
             recalculateChildrenPosition();
 
-        children.forEach(GuiElement::tick);
+        children.forEach(child -> {
+            boolean visible = isChildrenVisible(child);
+            child.setVisible(visible);
+            if (visible)
+                child.tick();
+        });
     }
 
     public boolean doesChildrenOverflow() {
@@ -89,12 +100,12 @@ public class GuiBoxContainer extends GuiContainer {
 
             switch (direction) {
                 case Horizontal -> {
-                    newPosition = new Vec2(position.x + offset, 0);
+                    newPosition = new Vec2(offset, 0);
                     offset += child.getContentsWidth() + childrenMargin;
                     break;
                 }
                 case Vertical -> {
-                    newPosition = new Vec2(0, position.y + offset);
+                    newPosition = new Vec2(0, offset);
                     offset += child.getContentsHeight() + childrenMargin;
                     break;
                 }

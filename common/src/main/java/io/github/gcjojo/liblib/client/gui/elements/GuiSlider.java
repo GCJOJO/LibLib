@@ -38,7 +38,7 @@ public class GuiSlider extends GuiElement {
 
     @Override
     public Rect2i getBoundingBox() {
-        return new Rect2i(0, 0, (int) getContentsWidth(), (int) getContentsHeight());
+        return new Rect2i(0, 0, (int) (getContentsWidth() * 0.5f), (int) (getContentsHeight() * 0.5f));
     }
 
     private void setup(int thickness, int length, float startValue, float endValue, float step, SliderDirection direction) {
@@ -76,12 +76,16 @@ public class GuiSlider extends GuiElement {
 
     @Override
     public float getContentsWidth() {
-        return 0;
+        if (direction == SliderDirection.Horizontal)
+            return this.length;
+        return this.thickness;
     }
 
     @Override
     public float getContentsHeight() {
-        return 0;
+        if (direction == SliderDirection.Vertical)
+            return this.length;
+        return this.thickness;
     }
 
     @Override
