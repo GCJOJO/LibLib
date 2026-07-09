@@ -66,7 +66,7 @@ public final class LibLib {
             float deltaTime = (float) (now - lastTick) / 1_000_000_000.0f;
             lastTick = now;
 
-            TweenManager.updateTweens(deltaTime, TweenManager.TweenSide.SERVER);
+            TweenManager.updateSequences(deltaTime, TweenManager.TweenSide.SERVER);
         });
 
         LibLibEvents.PLAYER_INVENTORY_CHANGED.register((player, inventoryDifference) -> {

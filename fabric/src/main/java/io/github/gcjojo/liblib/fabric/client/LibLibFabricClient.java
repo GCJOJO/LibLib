@@ -12,7 +12,7 @@ public final class LibLibFabricClient implements ClientModInitializer {
         LibLib.setSoundPlayer(new FabricSoundPlayer());
 
         WorldRenderEvents.START.register((context) -> {
-            TweenManager.updateTweens(context.tickDelta(), TweenManager.TweenSide.CLIENT);
+            TweenManager.updateSequences(context.tickDelta(), TweenManager.TweenSide.CLIENT);
         });
 
 

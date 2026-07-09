@@ -3,10 +3,7 @@ package io.github.gcjojo.liblib.client.gui;
 import io.github.gcjojo.liblib.LibLib;
 import io.github.gcjojo.liblib.client.gui.elements.*;
 import io.github.gcjojo.liblib.math.Color;
-import io.github.gcjojo.liblib.tween.Easing;
-import io.github.gcjojo.liblib.tween.Interpolator;
-import io.github.gcjojo.liblib.tween.Tween;
-import io.github.gcjojo.liblib.tween.TweenManager;
+import io.github.gcjojo.liblib.tween.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
@@ -91,18 +88,21 @@ public class TestGui extends GuiScreen {
 
         addElement(progressBar);
 
-        Tween<Vec2> posTween = TweenManager.createTween(TweenManager.TweenSide.CLIENT, progressBar::getPosition, progressBar::setPosition, Interpolator.VEC2)
-                .values(new Vec2(this.width * 0.5f - progressBar.getLength() * 0.5f, this.height + 100), new Vec2(this.width * 0.5f - progressBar.getLength() * 0.5f, this.height * 0.95f))
-                .duration(2.0f)
-                .easing(Easing.Cubic.EASE_IN_OUT)
-                .play();
+        TweenSequence sequence = TweenManager.createTweenSequence(TweenManager.TweenSide.CLIENT);
+        sequence.setParallel(true);
 
-        Tween<Float> sliderContainerTween =
-                TweenManager.createTween(TweenManager.TweenSide.CLIENT, boxContainer::getSliderValue, boxContainer::setSliderValue, Interpolator.FLOAT)
+        TweenProperty<Vec2> posTweenProperty = sequence.tweenProperty(progressBar::getPosition, progressBar::setPosition, Interpolator.VEC2)
+                .values(new Vec2(this.width * 0.5f - progressBar.getLength() * 0.5f, this.height + 100), new Vec2(this.width * 0.5f - progressBar.getLength() * 0.5f, this.height * 0.95f))
+                .duration(1.0f)
+                .easing(Easing.Cubic.EASE_IN_OUT);
+
+        TweenProperty<Float> sliderContainerTweenProperty =
+                sequence.tweenProperty(boxContainer::getSliderValue, boxContainer::setSliderValue, Interpolator.FLOAT)
                         .values(0.0f, 0.50f)
                         .duration(2.0f)
-                        .easing(Easing.Cubic.EASE_IN_OUT)
-                        .play();
+                        .easing(Easing.Cubic.EASE_IN_OUT);
+
+        sequence.play();
     }
 
     @Override

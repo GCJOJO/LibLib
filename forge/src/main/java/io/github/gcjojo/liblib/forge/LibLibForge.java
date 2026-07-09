@@ -36,7 +36,7 @@ public final class LibLibForge {
     public static class ClientModForge {
         @SubscribeEvent
         public static void onRenderFrame(ViewportEvent event) {
-            TweenManager.updateTweens((float) event.getPartialTick(), TweenManager.TweenSide.CLIENT);
+            TweenManager.updateSequences((float) event.getPartialTick(), TweenManager.TweenSide.CLIENT);
         }
     }
 }

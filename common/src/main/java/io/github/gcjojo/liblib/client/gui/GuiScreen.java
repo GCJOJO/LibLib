@@ -47,7 +47,7 @@ public class GuiScreen extends Screen {
 
     @Override
     public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        TweenManager.updateTweens(partialTick, TweenManager.TweenSide.CLIENT);
+        TweenManager.updateSequences(partialTick, TweenManager.TweenSide.CLIENT);
 
         if (renderBackground)
             renderBackground(graphics);

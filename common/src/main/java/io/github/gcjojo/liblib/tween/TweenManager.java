@@ -2,25 +2,23 @@ package io.github.gcjojo.liblib.tween;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class TweenManager {
-    public static Map<Tween<?>, TweenSide> runningTweens = new HashMap<>();
+    public static Map<TweenSequence, TweenSide> runningSequences = new HashMap<>();
 
-    public static <T> Tween<T> createTween(TweenSide side, Supplier<T> getter, Consumer<T> setter, Interpolator<T> interpolator) {
-        Tween<T> newTween = Tween.of(getter, setter, interpolator);
-        runningTweens.put(newTween, side);
-        return newTween;
+    public static TweenSequence createTweenSequence(TweenSide side) {
+        TweenSequence sequence = new TweenSequence();
+        runningSequences.put(sequence, side);
+        return sequence;
     }
 
-    public static void updateTweens(float delta, TweenSide side) {
-        runningTweens.forEach((tween, tweenSide) -> {
+    public static void updateSequences(float delta, TweenSide side) {
+        runningSequences.forEach((sequence, tweenSide) -> {
             if (side == tweenSide)
-                tween.update(delta);
+                sequence.update(delta);
         });
 
-        runningTweens.entrySet().removeIf((entry) -> entry.getKey().isFinished());
+        runningSequences.entrySet().removeIf((entry) -> entry.getKey().isFinished());
     }
 
     public enum TweenSide {
