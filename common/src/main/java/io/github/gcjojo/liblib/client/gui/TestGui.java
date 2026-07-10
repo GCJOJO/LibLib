@@ -102,6 +102,14 @@ public class TestGui extends GuiScreen {
                         .duration(2.0f)
                         .easing(Easing.Cubic.EASE_IN_OUT);
 
+        sequence.setParallel(false);
+
+        sequence.tweenWait(1.0f);
+
+        sequence.tweenCallback(() -> {
+            LibLib.getLogger().info("Tween Callback !");
+        });
+
         sequence.play();
     }
 

@@ -23,6 +23,18 @@ public class TweenSequence {
         return tweenProperty;
     }
 
+    public TweenWait tweenWait(float waitTime) {
+        TweenWait tweenWait = new TweenWait(waitTime);
+        tweens.add(tweenWait);
+        return tweenWait;
+    }
+
+    public TweenCallback tweenCallback(Runnable callback) {
+        TweenCallback tweenCallback = TweenCallback.of(callback);
+        tweens.add(tweenCallback);
+        return tweenCallback;
+    }
+
     /**
      * Set if the tweens running after will execute in parallel
      * If set to true prior to calling this method with another true value,
