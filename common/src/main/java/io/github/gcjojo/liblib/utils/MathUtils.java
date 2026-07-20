@@ -1,5 +1,6 @@
 package io.github.gcjojo.liblib.utils;
 
+import io.github.gcjojo.liblib.math.Color;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
@@ -37,5 +38,14 @@ public class MathUtils {
 
     public static Vec3 lerp(Vec3 start, Vec3 end, float progress) {
         return new Vec3(lerp(start.x, end.x, progress), lerp(start.y, end.y, progress), lerp(start.z, end.z, progress));
+    }
+
+    public static Color lerp(Color start, Color end, float progress) {
+        return new Color(
+                lerp(start.alpha, end.alpha, progress),
+                lerp(start.red, end.red, progress),
+                lerp(start.green, end.green, progress),
+                lerp(start.blue, end.blue, progress)
+        );
     }
 }

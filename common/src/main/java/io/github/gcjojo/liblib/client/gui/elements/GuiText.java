@@ -14,14 +14,14 @@ import net.minecraft.network.chat.Component;
 @Getter
 @Setter
 public class GuiText extends GuiElement {
-    private static final Font font = Minecraft.getInstance().font;
-    protected Component contents;
+    protected static final Font font = Minecraft.getInstance().font;
+    protected Component text;
     protected TextHorizontalAlignment horizontalAlignment;
     protected TextVerticalAlignment verticalAlignment;
 
-    public GuiText(Screen screen, Component contents) {
+    public GuiText(Screen screen, Component text) {
         super(screen);
-        this.contents = contents;
+        this.text = text;
         this.horizontalAlignment = TextHorizontalAlignment.Left;
         this.verticalAlignment = TextVerticalAlignment.Top;
         this.color = Color.WHITE;
@@ -34,7 +34,7 @@ public class GuiText extends GuiElement {
 
     @Override
     public float getContentsWidth() {
-        return font.width(contents);
+        return font.width(text);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class GuiText extends GuiElement {
     }
 
     @Override
-    public void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
+    protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         PoseStack pose = graphics.pose();
         pose.pushPose();
         float horizontalAlignmentMultiplier;
@@ -68,7 +68,7 @@ public class GuiText extends GuiElement {
 
         pose.translate(-getContentsWidth() * horizontalAlignmentMultiplier, -getContentsHeight() * verticalAlignmentMultiplier, 0.0f);
 
-        graphics.drawString(font, contents, 0, 0, 0xFFFFFFFF);
+        graphics.drawString(font, text, 0, 0, 0xFFFFFFFF);
         pose.popPose();
     }
 
