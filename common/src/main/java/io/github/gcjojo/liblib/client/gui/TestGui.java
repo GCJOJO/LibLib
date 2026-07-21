@@ -115,6 +115,10 @@ public class TestGui extends GuiScreen {
 
         richText = new GuiRichText(this, Component.literal("[b]Titre[/b]\n[gradient from=#FF0000FF to=#0000FFFF]Texte en dégradé[/gradient]\n normal [wave]et ondulé[/wave] \n[rainbow][b]et arc-en-ciel gras[/b][/rainbow]"));
         richText.setPosition(new Vec2(this.width * 0.5f, this.height * 0.7f));
+        richText.setHorizontalAlignment(GuiText.TextHorizontalAlignment.Center);
+        richText.setVerticalAlignment(GuiText.TextVerticalAlignment.Center);
+        richText.setDrawnCharacters(50);
+        char c = richText.getLastDrawCharacter();
         addElement(richText);
     }
 

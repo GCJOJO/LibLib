@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 public class GuiText extends GuiElement {
     protected static final Font font = Minecraft.getInstance().font;
     protected Component text;
+    protected int drawnCharacters = -1;
     protected TextHorizontalAlignment horizontalAlignment;
     protected TextVerticalAlignment verticalAlignment;
 
@@ -47,6 +48,11 @@ public class GuiText extends GuiElement {
         return true;
     }
 
+    public char getLastDrawCharacter() {
+        String string = text.getString(drawnCharacters);
+        return string.charAt(string.length() - 1);
+    }
+
     @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         PoseStack pose = graphics.pose();
@@ -68,7 +74,11 @@ public class GuiText extends GuiElement {
 
         pose.translate(-getContentsWidth() * horizontalAlignmentMultiplier, -getContentsHeight() * verticalAlignmentMultiplier, 0.0f);
 
-        graphics.drawString(font, text, 0, 0, 0xFFFFFFFF);
+        Component drawnText = text;
+        if (drawnCharacters > -1) {
+            drawnText = Component.literal(drawnText.getString(drawnCharacters));
+        }
+        graphics.drawString(font, drawnText, 0, 0, 0xFFFFFFFF);
         pose.popPose();
     }
 

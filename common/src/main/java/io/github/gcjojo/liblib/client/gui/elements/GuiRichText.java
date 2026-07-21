@@ -10,7 +10,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.phys.Vec2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +31,6 @@ public class GuiRichText extends GuiText {
         final String textString = text.getString();
         List<BBNode> nodes = BBCodeParser.parse(textString);
         styledCharacters = BBCodeParser.flatten(nodes);
-
-        float drawOffsetX = -getContentsWidth() * 0.5f;
-        float drawOffsetY = -getContentsHeight() * 0.5f;
-        drawOffset = new Vec2(drawOffsetX, drawOffsetY);
     }
 
     public void setText(Component newText) {
@@ -82,6 +77,13 @@ public class GuiRichText extends GuiText {
     }
 
     @Override
+    public char getLastDrawCharacter() {
+        if (drawnCharacters > -1 && drawnCharacters < styledCharacters.size())
+            return styledCharacters.get(drawnCharacters).character();
+        return styledCharacters.get(styledCharacters.size() - 1).character();
+    }
+
+    @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         tick += partialTick;
         final float time = tick * 0.05f;
@@ -91,6 +93,9 @@ public class GuiRichText extends GuiText {
         final PoseStack poseStack = graphics.pose();
 
         for (int i = 0; i < styledCharacters.size(); i++) {
+            if (drawnCharacters > -1 && i > drawnCharacters)
+                break;
+
             StyledChar c = styledCharacters.get(i);
             if (c.character() == '\n') {
                 cursorX = 0;
@@ -107,6 +112,24 @@ public class GuiRichText extends GuiText {
                     .withStrikethrough(c.style().strikethrough());
 
             poseStack.pushPose();
+
+            float horizontalAlignmentMultiplier;
+
+            switch (horizontalAlignment) {
+                case Center -> horizontalAlignmentMultiplier = 0.5f;
+                case Right -> horizontalAlignmentMultiplier = 1.0f;
+                default -> horizontalAlignmentMultiplier = 0.0f;
+            }
+
+            float verticalAlignmentMultiplier = 0.0f;
+            switch (verticalAlignment) {
+                case Center -> verticalAlignmentMultiplier = 0.5f;
+                case Bottom -> verticalAlignmentMultiplier = 1.0f;
+                default -> verticalAlignmentMultiplier = 0.0f;
+            }
+            // TODO Maybe do this per line
+            poseStack.translate(-getContentsWidth() * horizontalAlignmentMultiplier, -getContentsHeight() * verticalAlignmentMultiplier, 0.0f);
+
             poseStack.translate(cursorX + transform.offsetX(), cursorY + transform.offsetY(), 0.0f);
             poseStack.scale(transform.scale(), transform.scale(), 1.0f);
             if (transform.rotationDegrees() != 0)
