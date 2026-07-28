@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import io.github.gcjojo.liblib.bbcode.*;
 import io.github.gcjojo.liblib.math.Color;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -15,11 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Ok là j'avoue j'ai demandé de l'aide à ClaudeSlop
-// TODO Fix Element size and make auto wrapping text
 @Getter
 public class GuiRichText extends GuiText {
     private float tick = 0.0f;
     private List<StyledChar> styledCharacters = new ArrayList<>();
+    @Getter
+    @Setter
+    private float width = 0.0f;
 
     public GuiRichText(Screen screen, Component text) {
         super(screen, text);
@@ -102,6 +105,21 @@ public class GuiRichText extends GuiText {
                 cursorY += lineHeight;
                 continue;
             }
+
+            if (width > 0.0f && c.character() == ' ') {
+                float wordWidth = 0.0f;
+                for (int j = i + 1; j < styledCharacters.size(); j++) {
+                    if (styledCharacters.get(j).character() == ' ') break;
+                    wordWidth += font.width(String.valueOf(styledCharacters.get(j).character()));
+                }
+
+                if (cursorX + wordWidth >= width) {
+                    cursorX = 0;
+                    cursorY += lineHeight;
+                    continue;
+                }
+            }
+
 
             TextEffect.CharTransform transform = TextEffects.combine(c.effects(), i, time, c.style().color() != null ? c.style().color() : Color.WHITE);
 

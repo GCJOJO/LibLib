@@ -117,6 +117,7 @@ public class TestGui extends GuiScreen {
         richText.setPosition(new Vec2(this.width * 0.5f, this.height * 0.7f));
         richText.setHorizontalAlignment(GuiText.TextHorizontalAlignment.Center);
         richText.setVerticalAlignment(GuiText.TextVerticalAlignment.Center);
+        richText.setWidth(100);
         richText.setDrawnCharacters(50);
         char c = richText.getLastDrawCharacter();
         addElement(richText);
