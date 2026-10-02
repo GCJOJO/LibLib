@@ -32,6 +32,7 @@ public final class LibLibNeoForge {
         @SubscribeEvent
         public void onRenderFrame(RenderFrameEvent.Pre event) {
             TweenManager.updateSequences(event.getPartialTick().getGameTimeDeltaTicks(), TweenManager.TweenSide.CLIENT);
+            
         }
     }
 }

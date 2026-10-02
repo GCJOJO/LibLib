@@ -7,6 +7,14 @@ architectury {
     neoForge()
 }
 
+loom {
+    neoForge {
+        mixin {
+            "liblib.mixins.json"
+        }
+    }
+}
+
 configurations {
     common {
         canBeResolved = true

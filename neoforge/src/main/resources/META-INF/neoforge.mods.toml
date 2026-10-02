@@ -13,6 +13,9 @@ description = '''
 '''
 #logoFile = ""
 
+[[mixins]]
+config = "liblib.mixins.json"
+
 [[dependencies.liblib]]
 modId = "neoforge"
 mandatory = true
