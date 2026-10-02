@@ -52,9 +52,9 @@ public class GuiButton extends GuiElement {
         int buttonX = (int) (-buttonWidth * 0.5f);
         int buttonY = (int) (-buttonHeight * 0.5f);
 
-        inactiveNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, buttonX, buttonY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(0));
-        activeNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, buttonX, buttonY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(1));
-        hoveredNineSlice = new GuiNineSliced(screen, GuiNineSliced.WIDGETS_ATLAS, buttonX, buttonY, buttonWidth, buttonHeight, 20, 4, 200, 20, 0, getAtlasTextureY(2));
+        inactiveNineSlice = new GuiNineSliced(screen, GuiNineSliced.BUTTON_DISABLED, buttonX, buttonY, buttonWidth, buttonHeight);
+        activeNineSlice = new GuiNineSliced(screen, GuiNineSliced.BUTTON, buttonX, buttonY, buttonWidth, buttonHeight);
+        hoveredNineSlice = new GuiNineSliced(screen, GuiNineSliced.BUTTON_HOVERED, buttonX, buttonY, buttonWidth, buttonHeight);
 
         inactiveNineSlice.setVisible(false);
         activeNineSlice.setVisible(false);

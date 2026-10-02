@@ -1,11 +1,13 @@
 package io.github.gcjojo.liblib.client.gui.elements;
 
+import io.github.gcjojo.liblib.LibLib;
 import io.github.gcjojo.liblib.utils.MathUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 
 @Getter
@@ -37,11 +39,6 @@ public class GuiProgressBar extends GuiElement {
         setup(startValue, endValue, currentValue, thickness, length, direction);
     }
 
-    public static int getBarTextureY(BarColor color) {
-        int barIndex = color.getColorY();
-        return barIndex * 5;
-    }
-
     @Override
     public Rect2i getBoundingBox() {
         return new Rect2i(0, 0, 0, 0);
@@ -55,27 +52,24 @@ public class GuiProgressBar extends GuiElement {
         this.length = length;
         this.direction = direction;
 
-        int progressBarTextureY = getBarTextureY(this.progressBarColor);
-        int backgroundBarTextureY = getBarTextureY(this.backgroundBarColor);
+        ResourceLocation progressBarTexture = progressBarColor.getSpriteLocation();
+        ResourceLocation backgroundBarTexture = backgroundBarColor.getSpriteLocation();
 
-        switch (this.direction) {
-            case Vertical -> {
-                progressBar = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, thickness, (int) getProgressBarLength(), 2, 2, 182, 5, 0, progressBarTextureY);
-                backgroundBar = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, thickness, length, 2, 2, 182, 5, 0, backgroundBarTextureY);
-            }
-            case Horizontal -> {
-                progressBar = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, (int) getProgressBarLength(), thickness, 2, 2, 182, 5, 0, progressBarTextureY);
-                backgroundBar = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, length, thickness, 2, 2, 182, 5, 0, backgroundBarTextureY);
-            }
+        progressBar = new GuiNineSliced(this.screen, progressBarTexture, 0, 0, (int) getProgressBarLength(), thickness);
+        backgroundBar = new GuiNineSliced(this.screen, backgroundBarTexture, 0, 0, length, thickness);
+
+        if (direction == ProgressBarDirection.Vertical) {
+            progressBar.setAngle(90.0f);
+            progressBar.setRotationPivot(new Vec2(0.0f, 0.5f));
+
+            backgroundBar.setAngle(90.0f);
+            backgroundBar.setRotationPivot(new Vec2(0.0f, 0.5f));
         }
     }
 
     public void setCurrentValue(float newValue) {
         this.currentValue = MathUtils.clamp(newValue, startValue, endValue);
-        switch (this.direction) {
-            case Vertical -> progressBar.setNineSliceHeight((int) getProgressBarLength());
-            case Horizontal -> progressBar.setNineSliceWidth((int) getProgressBarLength());
-        }
+        progressBar.setNineSliceWidth((int) getProgressBarLength());
     }
 
     public float getProgressBarLength() {
@@ -138,26 +132,26 @@ public class GuiProgressBar extends GuiElement {
     }
 
     public enum BarColor {
-        White(13),
-        Gray(12),
-        Purple(11),
-        DarkPurple(10),
-        Yellow(9),
-        DarkYellow(8),
-        Green(7),
-        DarkGreen(6),
-        Orange(5),
-        DarkOrange(4),
-        Blue(3),
-        DarkBlue(2),
-        Pink(1),
-        DarkPink(0);
+        White(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/white_progress")),
+        Gray(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/white_background")),
+        Purple(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/purple_progress")),
+        DarkPurple(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/purple_background")),
+        Yellow(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/yellow_progress")),
+        DarkYellow(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/yellow_background")),
+        Green(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/green_progress")),
+        DarkGreen(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/green_background")),
+        Red(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/red_progress")),
+        DarkRed(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/red_background")),
+        Blue(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/blue_progress")),
+        DarkBlue(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/blue_background")),
+        Pink(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/pink_progress")),
+        DarkPink(ResourceLocation.tryBuild(LibLib.MOD_ID, "progress_bars/pink_background"));
 
         @Getter
-        private final int colorY;
+        private final ResourceLocation spriteLocation;
 
-        BarColor(int colorY) {
-            this.colorY = colorY;
+        BarColor(ResourceLocation spriteLocation) {
+            this.spriteLocation = spriteLocation;
         }
     }
 }

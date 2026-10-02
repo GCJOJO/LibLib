@@ -11,35 +11,20 @@ import net.minecraft.world.phys.Vec2;
 @Getter
 @Setter
 public class GuiNineSliced extends GuiElement {
-    public static final ResourceLocation BARS_ATLAS = ResourceLocation.tryParse("textures/gui/bars.png");
-    public static final ResourceLocation WIDGETS_ATLAS = ResourceLocation.tryParse("textures/gui/widgets.png");
-
+    public static final ResourceLocation BUTTON = ResourceLocation.tryParse("widget/button");
+    public static final ResourceLocation BUTTON_DISABLED = ResourceLocation.tryParse("widget/button_disabled");
+    public static final ResourceLocation BUTTON_HOVERED = ResourceLocation.tryParse("widget/button_highlighted");
 
     protected ResourceLocation atlasLocation;
     protected int nineSliceWidth;
     protected int nineSliceHeight;
-    protected int sliceWidth;
-    protected int sliceHeight;
-    protected int uWidth;
-    protected int vHeight;
-    protected int textureX;
-    protected int textureY;
 
-    public GuiNineSliced(Screen screen, ResourceLocation atlasLocation, int x, int y, int nineSliceWidth, int nineSliceHeight,
-                         int sliceWidth, int sliceHeight,
-                         int uWidth, int vHeight,
-                         int textureX, int textureY) {
+    public GuiNineSliced(Screen screen, ResourceLocation atlasLocation, int x, int y, int nineSliceWidth, int nineSliceHeight) {
         super(screen);
         this.atlasLocation = atlasLocation;
         this.setPosition(new Vec2(x, y));
         this.nineSliceWidth = nineSliceWidth;
         this.nineSliceHeight = nineSliceHeight;
-        this.sliceWidth = sliceWidth;
-        this.sliceHeight = sliceHeight;
-        this.uWidth = uWidth;
-        this.vHeight = vHeight;
-        this.textureX = textureX;
-        this.textureY = textureY;
     }
 
     @Override
@@ -65,7 +50,9 @@ public class GuiNineSliced extends GuiElement {
     @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
         try {
-            graphics.blitNineSliced(atlasLocation, 0, 0, nineSliceWidth, nineSliceHeight, sliceWidth, sliceHeight, uWidth, vHeight, textureX, textureY);
+            //graphics.blitSprite(atlasLocation, nineSliceWidth, nineSliceHeight, sliceWidth, sliceHeight, uWidth, vHeight, textureX, textureY);
+            graphics.blitSprite(atlasLocation, 0, 0, nineSliceWidth, nineSliceHeight);
+             
         } catch (ArithmeticException e) {
             //LibLib.getLogger().warn("Error when drawing GuiNineSliced");
         }
@@ -75,4 +62,6 @@ public class GuiNineSliced extends GuiElement {
     public void tick() {
 
     }
+
+
 }

@@ -50,7 +50,7 @@ public class GuiScreen extends Screen {
         TweenManager.updateSequences(partialTick, TweenManager.TweenSide.CLIENT);
 
         if (renderBackground)
-            renderBackground(graphics);
+            renderBackground(graphics, mouseX, mouseY, partialTick);
 
         elements.forEach(element -> element.draw(graphics, mouseX, mouseY, partialTick, Vec2.ZERO));
     }
@@ -92,14 +92,14 @@ public class GuiScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scroll) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         for (int i = elements.size() - 1; i >= 0; i--) {
             GuiElement element = elements.get(i);
             if (element.isMouseOver(mouseX, mouseY))
-                if (element.mouseScrolled(mouseX, mouseY, scroll))
+                if (element.mouseScrolled(mouseX, mouseY, scrollY))
                     return true;
         }
 
-        return super.mouseScrolled(mouseX, mouseY, scroll);
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 }

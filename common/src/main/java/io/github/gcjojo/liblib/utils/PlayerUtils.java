@@ -36,11 +36,11 @@ public class PlayerUtils {
 
     // Merci ClaudeSlop
     public static boolean isInStructure(ServerPlayer player, ResourceLocation structureId) {
-        ServerLevel level = (ServerLevel) player.level();
+        ServerLevel level = player.serverLevel();
         ResourceKey<Structure> key = ResourceKey.create(Registries.STRUCTURE, structureId);
 
         return level.structureManager()
-                .getStructureWithPieceAt(player.blockPosition(), key)
+                .getStructureWithPieceAt(player.blockPosition(), holder -> holder.is(key))
                 .isValid();
     }
 

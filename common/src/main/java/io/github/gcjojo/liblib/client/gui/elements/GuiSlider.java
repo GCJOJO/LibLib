@@ -20,10 +20,9 @@ public class GuiSlider extends GuiElement {
 
     protected float currentValue;
     protected boolean scrolling = false;
-    protected GuiNineSliced sliderButton;
-    protected GuiNineSliced sliderBackground;
-
     protected SliderValueUpdated sliderValueUpdated = null;
+    GuiNineSliced sliderButton;
+    GuiNineSliced sliderBackground;
 
     public GuiSlider(Screen screen, int thickness, int length, float startValue, float endValue, float step, SliderDirection direction) {
         super(screen);
@@ -62,15 +61,19 @@ public class GuiSlider extends GuiElement {
         int buttonLength = (int) ((step / Math.abs(endValue - startValue)) * length);
         if (buttonLength < 10) buttonLength = 10;
 
-        switch (this.direction) {
-            case Vertical -> {
-                sliderButton = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, thickness, buttonLength, 2, 2, 182, 5, 0, 65);
-                sliderBackground = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, thickness, length + buttonLength, 2, 2, 182, 5, 0, 60);
-            }
-            case Horizontal -> {
-                sliderButton = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, buttonLength, thickness, 2, 2, 182, 5, 0, 65);
-                sliderBackground = new GuiNineSliced(this.screen, GuiNineSliced.BARS_ATLAS, 0, 0, length + buttonLength, thickness, 2, 2, 182, 5, 0, 60);
-            }
+        switch (direction) {
+            case Vertical ->
+                    sliderButton = new GuiNineSliced(this.screen, GuiProgressBar.BarColor.White.getSpriteLocation(), 0, 0, thickness, buttonLength);
+            case Horizontal ->
+                    sliderButton = new GuiNineSliced(this.screen, GuiProgressBar.BarColor.White.getSpriteLocation(), 0, 0, buttonLength, thickness);
+        }
+
+        sliderBackground = new GuiNineSliced(this.screen, GuiProgressBar.BarColor.Gray.getSpriteLocation(), 0, 0, length + buttonLength, thickness);
+
+        if (direction == SliderDirection.Vertical) {
+            sliderBackground.setAngle(90.0f);
+            sliderBackground.setRotationPivot(new Vec2(0.5f, 0.5f));
+            sliderBackground.setDrawOffset(new Vec2(thickness, 0));
         }
     }
 
