@@ -9,4 +9,9 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
 
     modImplementation "dev.architectury:architectury:$rootProject.architectury_api_version"
+
+    modApi ("org.incendo:cloud-minecraft-modded-common:${cloud_version}") {
+        transitive = true
+    }
+    api "org.incendo:cloud-annotations:${cloud_annotations_version}"
 }

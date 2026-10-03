@@ -3,6 +3,10 @@ package io.github.gcjojo.liblib.fabric;
 import io.github.gcjojo.liblib.LibLib;
 import io.github.gcjojo.liblib.fabric.utils.FabricPlayerDataManager;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.commands.CommandSourceStack;
+import org.incendo.cloud.execution.ExecutionCoordinator;
+import org.incendo.cloud.fabric.FabricServerCommandManager;
 
 public final class LibLibFabric implements ModInitializer {
     @Override
@@ -14,5 +18,10 @@ public final class LibLibFabric implements ModInitializer {
         // Run our common setup.
         LibLib.init();
         LibLib.setPlayerDataManager(new FabricPlayerDataManager());
+
+        FabricServerCommandManager<CommandSourceStack> commandManager =
+                FabricServerCommandManager.createNative(ExecutionCoordinator.simpleCoordinator());
+
+        LibLib.registerCommands(commandManager);
     }
 }

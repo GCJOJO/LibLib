@@ -1,5 +1,6 @@
 package io.github.gcjojo.liblib.mixin.client;
 
+import io.github.gcjojo.liblib.LibLib;
 import io.github.gcjojo.liblib.client.CustomCameraManager;
 import io.github.gcjojo.liblib.utils.MathUtils;
 import net.minecraft.client.Camera;
@@ -53,11 +54,11 @@ public abstract class CameraMixin {
 
     @Unique
     void liblib$setRotation(float yaw, float pitch, float roll) {
-        this.xRot = yaw;
-        this.yRot = pitch;
-        this.liblib$zRot = roll;
+        this.xRot = MathUtils.toRad(yaw);
+        this.yRot = MathUtils.toRad(pitch);
+        this.liblib$zRot = MathUtils.toRad(roll);
 
-        this.rotation.rotationYXZ((float) Math.PI - MathUtils.toRad(this.xRot), -MathUtils.toRad(this.yRot), MathUtils.toRad(this.liblib$zRot));
+        this.rotation.rotationYXZ((float) Math.PI - this.yRot, -this.xRot, this.liblib$zRot);
         FORWARDS.rotate(this.rotation, this.forwards);
         UP.rotate(this.rotation, this.up);
         LEFT.rotate(this.rotation, this.left);
@@ -74,11 +75,17 @@ public abstract class CameraMixin {
     @Shadow
     protected abstract void setPosition(Vec3 position);
 
+    @Shadow
+    private Vec3 position;
+
     @Inject(method = "setup", at = @At("RETURN"))
     private void liblib$overrideCamera(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
         if (CustomCameraManager.isActive()) {
             this.setPosition(CustomCameraManager.getPosition());
             this.liblib$setRotation(CustomCameraManager.getRotation());
+        } else {
+            CustomCameraManager.setPosition(this.position);
+            CustomCameraManager.setRotation(new Vector3f(this.xRot, this.yRot, this.liblib$zRot));
         }
     }
 }
