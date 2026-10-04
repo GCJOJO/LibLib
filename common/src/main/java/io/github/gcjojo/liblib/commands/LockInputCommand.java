@@ -56,7 +56,7 @@ public class LockInputCommand {
         NetworkManager.sendToPlayers(players, new LibLibNetwork.LockInputPayload(LibLibNetwork.LockInputPayload.InputType.Mouse, true));
     }
 
-    @Command("input keyboard unlock [targets]")
+    @Command("input mouse unlock [targets]")
     @Permission("select.op_level.2")
     public void unlockMouse(CommandSourceStack sourceStack,
                          @Argument("targets") MultiplePlayerSelector targetPlayers) throws CommandSyntaxException {
