@@ -1,6 +1,9 @@
 package io.github.gcjojo.liblib.client;
 
-import io.github.gcjojo.liblib.tween.*;
+import io.github.gcjojo.liblib.tween.Easing;
+import io.github.gcjojo.liblib.tween.Interpolator;
+import io.github.gcjojo.liblib.tween.TweenManager;
+import io.github.gcjojo.liblib.tween.TweenSequence;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.world.phys.Vec3;
@@ -10,6 +13,9 @@ public class CustomCameraManager {
     @Getter
     @Setter
     private static boolean isActive = false;
+    @Getter
+    @Setter
+    private static boolean isFovActive = false;
     @Getter
     @Setter
     private static Vec3 position = new Vec3(0, 0, 0);
@@ -22,8 +28,20 @@ public class CustomCameraManager {
     @Getter
     private static Vector3f targetRotation = new Vector3f(0, 0, 0);
 
+    @Getter
+    @Setter
+    private static double internalFov = 0;
+
+    @Getter
+    @Setter
+    private static double fov = 0;
+    @Getter
+    @Setter
+    private static double targetFov = 0;
+
     static TweenSequence positionSequence = null;
     static TweenSequence rotationSequence = null;
+    static TweenSequence fovSequence = null;
 
     public static void setCameraMovement(Vec3 newPos, Vector3f newRot)
     {
@@ -74,5 +92,54 @@ public class CustomCameraManager {
     {
         setCameraMovement(oldPos, oldRot);
         setCameraTarget(newPos, newRot, easing, easeTime);
+    }
+
+    public static void setTargetFov(double newTargetFov, Easing easing, float easeTime)
+    {
+        isFovActive = true;
+
+        if(fovSequence == null)
+            fovSequence.stop();
+
+        targetFov = newTargetFov;
+        fovSequence = TweenManager.createTweenSequence(TweenManager.TweenSide.CLIENT);
+
+        fovSequence.tweenProperty(CustomCameraManager::getFov, CustomCameraManager::setFov, Interpolator.DOUBLE)
+                .duration(easeTime)
+                .easing(easing)
+                .values(fov, targetFov);
+
+        fovSequence.play();
+    }
+
+    public static void setFovVariation(double oldFov, double newTargetFov, Easing easing, float easeTime)
+    {
+        isFovActive = true;
+
+        if(fovSequence == null)
+            fovSequence.stop();
+
+        fov = oldFov;
+        targetFov = newTargetFov;
+        fovSequence = TweenManager.createTweenSequence(TweenManager.TweenSide.CLIENT);
+
+        fovSequence.tweenProperty(CustomCameraManager::getFov, CustomCameraManager::setFov, Interpolator.DOUBLE)
+                .duration(easeTime)
+                .easing(easing)
+                .values(fov, targetFov);
+
+        fovSequence.play();
+    }
+
+    public static void clearFov(Easing easing, float easeTime)
+    {
+        if(easeTime == 0)
+        {
+            isFovActive = false;
+            return;
+        }
+
+        setFovVariation(fov, internalFov, easing, easeTime);
+        fovSequence.tweenCallback(() -> isFovActive = false);
     }
 }

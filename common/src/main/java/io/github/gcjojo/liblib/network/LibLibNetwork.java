@@ -37,6 +37,10 @@ public class LibLibNetwork {
 
         NetworkManager.registerS2CPayloadType(HideHudPayload.TYPE, HideHudPayload.STREAM_CODEC);
         NetworkManager.registerS2CPayloadType(LockInputPayload.TYPE, LockInputPayload.STREAM_CODEC);
+
+        NetworkManager.registerS2CPayloadType(SetFovPayload.TYPE, SetFovPayload.STREAM_CODEC);
+        NetworkManager.registerS2CPayloadType(SetFovVariationPayload.TYPE, SetFovVariationPayload.STREAM_CODEC);
+        NetworkManager.registerS2CPayloadType(ClearFovPayload.TYPE, ClearFovPayload.STREAM_CODEC);
     }
 
     public static void registerClientReceiver() {
@@ -91,6 +95,24 @@ public class LibLibNetwork {
                     case Keyboard -> LibLib.setLockKeyboardInput(payload.lock);
                     case Mouse -> LibLib.setLockMouseInput(payload.lock);
                 }
+            });
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, SetFovPayload.TYPE, SetFovPayload.STREAM_CODEC, (payload, context) -> {
+            context.queue(() -> {
+                CustomCameraManager.setTargetFov(payload.newFov, payload.easing, payload.easeTime);
+            });
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, SetFovVariationPayload.TYPE, SetFovVariationPayload.STREAM_CODEC, (payload, context) -> {
+            context.queue(() -> {
+                CustomCameraManager.setFovVariation(payload.oldFov, payload.newFov, payload.easing, payload.easeTime);
+            });
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearFovPayload.TYPE, ClearFovPayload.STREAM_CODEC, (payload, context) -> {
+            context.queue(() -> {
+
             });
         });
     }
@@ -221,6 +243,55 @@ public class LibLibNetwork {
                 INPUT_TYPE_STREAM_CODEC, LockInputPayload::input,
                 ByteBufCodecs.BOOL, LockInputPayload::lock,
                 LockInputPayload::new
+        );
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    public record SetFovPayload(double newFov, Easing easing, float easeTime) implements CustomPacketPayload
+    {
+        public static final Type<SetFovPayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "set_fov"));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, SetFovPayload> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.DOUBLE, SetFovPayload::newFov,
+                EasingStreamCodec.CODEC, SetFovPayload::easing,
+                ByteBufCodecs.FLOAT, SetFovPayload::easeTime,
+                SetFovPayload::new
+        );
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    public record SetFovVariationPayload(double oldFov, double newFov, Easing easing, float easeTime) implements CustomPacketPayload {
+        public static final Type<SetFovVariationPayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "set_fov_variation"));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, SetFovVariationPayload> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.DOUBLE, SetFovVariationPayload::oldFov,
+                ByteBufCodecs.DOUBLE, SetFovVariationPayload::newFov,
+                EasingStreamCodec.CODEC, SetFovVariationPayload::easing,
+                ByteBufCodecs.FLOAT, SetFovVariationPayload::easeTime,
+                SetFovVariationPayload::new
+        );
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    public record ClearFovPayload(Easing easing, float easeTime) implements CustomPacketPayload {
+        public static final Type<ClearFovPayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "clear_fov"));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, ClearFovPayload> STREAM_CODEC = StreamCodec.composite(
+                EasingStreamCodec.CODEC, ClearFovPayload::easing,
+                ByteBufCodecs.FLOAT, ClearFovPayload::easeTime,
+                ClearFovPayload::new
         );
 
         @Override

@@ -1,6 +1,7 @@
 package io.github.gcjojo.liblib.mixin.client;
 
 import io.github.gcjojo.liblib.LibLib;
+import io.github.gcjojo.liblib.client.CustomCameraManager;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Matrix4f;
@@ -9,9 +10,24 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
+
+    @Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
+    private void liblib$getFov(Camera camera, float f, boolean bl, CallbackInfoReturnable<Double> cir)
+    {
+        if(CustomCameraManager.isFovActive()) {
+            CustomCameraManager.setInternalFov(cir.getReturnValue());
+            cir.setReturnValue(CustomCameraManager.getFov());
+        }
+        else {
+            CustomCameraManager.setFov(cir.getReturnValue());
+            CustomCameraManager.setInternalFov(cir.getReturnValue());
+        }
+    }
+
     @Inject(method = "renderItemInHand", at = @At("HEAD"), cancellable = true)
     private void liblib$onRenderHand(Camera camera, float f, Matrix4f matrix4f, CallbackInfo ci)
     {

@@ -1,6 +1,5 @@
 package io.github.gcjojo.liblib.mixin.client;
 
-import io.github.gcjojo.liblib.LibLib;
 import io.github.gcjojo.liblib.client.CustomCameraManager;
 import io.github.gcjojo.liblib.utils.MathUtils;
 import net.minecraft.client.Camera;
@@ -16,6 +15,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Camera.class)
 public abstract class CameraMixin {
@@ -87,5 +87,12 @@ public abstract class CameraMixin {
             CustomCameraManager.setPosition(this.position);
             CustomCameraManager.setRotation(new Vector3f(this.xRot, this.yRot, this.liblib$zRot));
         }
+    }
+
+    @Inject(method = "isDetached", at = @At("HEAD"), cancellable = true)
+    private void liblib$isDetached(CallbackInfoReturnable<Boolean> cir)
+    {
+        if(CustomCameraManager.isActive())
+            cir.setReturnValue(true);
     }
 }

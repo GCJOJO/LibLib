@@ -11,6 +11,7 @@ import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.Permission;
 import org.incendo.cloud.minecraft.modded.data.MultiplePlayerSelector;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class HideGUICommand {
@@ -18,12 +19,14 @@ public class HideGUICommand {
     @Permission("select.op_level.2")
     public void hideHud(CommandSourceStack sourceStack,
                         @Argument("targets") MultiplePlayerSelector targetPlayers) throws CommandSyntaxException {
-        if ((targetPlayers.values().isEmpty() && !sourceStack.isPlayer()))
+        if ((targetPlayers == null && !sourceStack.isPlayer()))
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        Collection<ServerPlayer> players = targetPlayers.values();
-        if (players.isEmpty())
+        Collection<ServerPlayer> players = new ArrayList<>();
+        if (targetPlayers == null)
             players.add(sourceStack.getPlayer());
+        else
+            players = targetPlayers.values();
 
         NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hud, true));
     }
@@ -32,12 +35,14 @@ public class HideGUICommand {
     @Permission("select.op_level.2")
     public void showHud(CommandSourceStack sourceStack,
                         @Argument("targets") MultiplePlayerSelector targetPlayers) throws CommandSyntaxException {
-        if ((targetPlayers.values().isEmpty() && !sourceStack.isPlayer()))
+        if ((targetPlayers == null && !sourceStack.isPlayer()))
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        Collection<ServerPlayer> players = targetPlayers.values();
-        if (players.isEmpty())
+        Collection<ServerPlayer> players = new ArrayList<>();
+        if (targetPlayers == null)
             players.add(sourceStack.getPlayer());
+        else
+            players = targetPlayers.values();
 
         NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hud, false));
     }
@@ -46,12 +51,14 @@ public class HideGUICommand {
     @Permission("select.op_level.2")
     public void hideHand(CommandSourceStack sourceStack,
                          @Argument("targets") MultiplePlayerSelector targetPlayers) throws CommandSyntaxException {
-        if ((targetPlayers.values().isEmpty() && !sourceStack.isPlayer()))
+        if ((targetPlayers == null && !sourceStack.isPlayer()))
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        Collection<ServerPlayer> players = targetPlayers.values();
-        if (players.isEmpty())
+        Collection<ServerPlayer> players = new ArrayList<>();
+        if (targetPlayers == null)
             players.add(sourceStack.getPlayer());
+        else
+            players = targetPlayers.values();
 
         NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
@@ -60,12 +67,14 @@ public class HideGUICommand {
     @Permission("select.op_level.2")
     public void showHand(CommandSourceStack sourceStack,
                          @Argument("targets") MultiplePlayerSelector targetPlayers) throws CommandSyntaxException {
-        if ((targetPlayers.values().isEmpty() && !sourceStack.isPlayer()))
+        if ((targetPlayers == null && !sourceStack.isPlayer()))
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        Collection<ServerPlayer> players = targetPlayers.values();
-        if (players.isEmpty())
+        Collection<ServerPlayer> players = new ArrayList<>();
+        if (targetPlayers == null)
             players.add(sourceStack.getPlayer());
+        else
+            players = targetPlayers.values();
 
         NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, false));
     }
