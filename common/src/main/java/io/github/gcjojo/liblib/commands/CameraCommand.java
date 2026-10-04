@@ -252,7 +252,7 @@ public class CameraCommand {
 
     @Command("camera <target> shake clear <layer>")
     @Permission("select.op_level.2")
-    public void clearShake(CommandSourceStack source, @Argument("target") MultiplePlayerSelector playerSelector, @Argument("type") CommandHelpers.ShakeType shakeType, @Argument("layer") int layer) throws CommandSyntaxException {
+    public void clearShake(CommandSourceStack source, @Argument("target") MultiplePlayerSelector playerSelector, @Argument("layer") int layer) throws CommandSyntaxException {
         Collection<ServerPlayer> players = playerSelector.values();
 
         if(players.isEmpty())
@@ -261,7 +261,7 @@ public class CameraCommand {
 
     @Command("camera <target> shake clear all")
     @Permission("select.op_level.2")
-    public void clearAllShake(CommandSourceStack source, @Argument("target") MultiplePlayerSelector playerSelector, @Argument("type") CommandHelpers.ShakeType shakeType) throws CommandSyntaxException {
+    public void clearAllShake(CommandSourceStack source, @Argument("target") MultiplePlayerSelector playerSelector) throws CommandSyntaxException {
         Collection<ServerPlayer> players = playerSelector.values();
 
         if(players.isEmpty())
