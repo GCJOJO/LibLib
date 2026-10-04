@@ -6,8 +6,12 @@ import io.github.gcjojo.liblib.tween.TweenManager;
 import io.github.gcjojo.liblib.tween.TweenSequence;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.Util;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
+
+import java.util.Iterator;
+import java.util.TreeMap;
 
 public class CustomCameraManager {
     @Getter
@@ -42,6 +46,11 @@ public class CustomCameraManager {
     static TweenSequence positionSequence = null;
     static TweenSequence rotationSequence = null;
     static TweenSequence fovSequence = null;
+
+    public record ActiveEffect(CameraEffect effect, long startTime){}
+
+    @Getter
+    static final TreeMap<Integer, ActiveEffect> EFFECTS = new TreeMap<>();
 
     public static void setCameraMovement(Vec3 newPos, Vector3f newRot)
     {
@@ -132,5 +141,48 @@ public class CustomCameraManager {
 
         setFovFromTo(fov, internalFov, easing, easeTime);
         fovSequence.tweenCallback(() -> isFovActive = false);
+    }
+
+    public static void setCameraEffect(int layer, CameraEffect effect)
+    {
+        ActiveEffect activeEffect = new ActiveEffect(effect, Util.getMillis());
+        EFFECTS.put(layer, activeEffect);
+    }
+
+    public static void clearCameraEffect(int layer)
+    {
+        EFFECTS.remove(layer);
+    }
+
+    public static void clearCameraEffects()
+    {
+        EFFECTS.clear();
+    }
+
+    public static CameraEffect.CameraTransform computeOffsets()
+    {
+        if(EFFECTS.isEmpty())
+            return CameraEffect.CameraTransform.DEFAULT;
+
+        Vec3 pos = Vec3.ZERO;
+        Vector3f rot = new Vector3f();
+
+        Iterator<ActiveEffect> it = EFFECTS.values().iterator();
+        while (it.hasNext()) {
+            ActiveEffect activeEffect = it.next();
+            float time = (Util.getMillis() - activeEffect.startTime) / 1000f;
+
+            if(activeEffect.effect.isFinished(time))
+            {
+                it.remove();
+                continue;
+            }
+
+            CameraEffect.CameraTransform t = activeEffect.effect().apply(time);
+            pos = pos.add(t.positionOffset());
+            rot.add(t.rotationOffset());
+        }
+
+        return new CameraEffect.CameraTransform(pos, rot);
     }
 }
