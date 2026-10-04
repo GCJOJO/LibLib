@@ -3,6 +3,7 @@ package io.github.gcjojo.liblib;
 import com.mojang.logging.LogUtils;
 import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
+import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import io.github.gcjojo.liblib.api.BlablaLibAPI;
@@ -96,6 +97,9 @@ public final class LibLib {
 
             TweenManager.updateSequences(deltaTime, TweenManager.TweenSide.SERVER);
         });
+
+        TickEvent.SERVER_POST.register(CameraChunkLoader::tick);
+        PlayerEvent.PLAYER_QUIT.register(CameraChunkLoader::resetPlayerChunkPosition);
 
         LibLibEvents.PLAYER_INVENTORY_CHANGED.register((player, inventoryDifference) -> {
             getLogger().info("{}'s inventory has changed :", player.getName().getString());

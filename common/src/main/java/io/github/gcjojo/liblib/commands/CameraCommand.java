@@ -39,7 +39,7 @@ public class CameraCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.SendCameraMovementPayload(
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraMovementPayload(
                 oldPos.position(), new Vector3f(oldYaw, oldPitch, oldRoll),
                 newPos.position(), new Vector3f(newYaw, newPitch, newRoll),
                 easing, easeTime));
@@ -61,7 +61,7 @@ public class CameraCommand {
         if(players.isEmpty())
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.SendCameraTargetPayload(cameraPos.position(), new Vector3f(yaw, pitch, roll),  Easing.LINEAR, 0));
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraTargetPayload(cameraPos.position(), new Vector3f(yaw, pitch, roll),  Easing.LINEAR, 0));
         NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
@@ -78,7 +78,7 @@ public class CameraCommand {
         if(players.isEmpty())
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.SendCameraPosTargetPayload(cameraPos.position(), Easing.LINEAR, 0));
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraPosTargetPayload(cameraPos.position(), Easing.LINEAR, 0));
         NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
@@ -95,7 +95,7 @@ public class CameraCommand {
         if(players.isEmpty())
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.SendCameraRotTargetPayload(new Vector3f(yaw, pitch, roll), Easing.LINEAR, 0));
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraRotTargetPayload(new Vector3f(yaw, pitch, roll), Easing.LINEAR, 0));
         NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
@@ -116,7 +116,7 @@ public class CameraCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.SendCameraTargetPayload(cameraPos.position(), new Vector3f(yaw, pitch, roll),  easing, easeTime));
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraTargetPayload(cameraPos.position(), new Vector3f(yaw, pitch, roll),  easing, easeTime));
         NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
@@ -135,7 +135,7 @@ public class CameraCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.SendCameraPosTargetPayload(cameraPos.position(), easing, easeTime));
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraPosTargetPayload(cameraPos.position(), easing, easeTime));
         NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
@@ -154,7 +154,7 @@ public class CameraCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.SendCameraRotTargetPayload(new Vector3f(yaw, pitch, roll), easing, easeTime));
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraRotTargetPayload(new Vector3f(yaw, pitch, roll), easing, easeTime));
         NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
@@ -216,5 +216,55 @@ public class CameraCommand {
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
 
         NetworkManager.sendToPlayers(players, new LibLibNetwork.ClearFovPayload(easing, easeTime));
+    }
+
+    public static void doShake(CommandSourceStack source, Collection<ServerPlayer> players, CommandHelpers.ShakeType shakeType, int layer, float intensity, float speed, float duration, float attack, float decay) {
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.ShakePayload(shakeType, layer, intensity, speed, new LibLibNetwork.Enveloppe(duration, attack, decay)));
+    }
+
+    @Command("camera <target> shake set <layer> <type> <intensity> <speed> <duration> [attack] [decay]")
+    @Permission("select.op_level.2")
+    public void shake(CommandSourceStack source,
+                                @Argument("target") MultiplePlayerSelector playerSelector, @Argument("type") CommandHelpers.ShakeType shakeType, @Argument("layer") int layer,
+                                @Argument("intensity") float intensity, @Argument("speed") float speed,
+                                @Argument("duration") float duration, @Argument("attack") @Default("0") float attack, @Argument("decay") @Default("0") float decay) throws CommandSyntaxException {
+        Collection<ServerPlayer> players = playerSelector.values();
+
+        if(players.isEmpty())
+            throw EntityArgument.NO_PLAYERS_FOUND.create();
+
+        doShake(source, players, shakeType, layer, intensity, speed, duration, attack, decay);
+    }
+
+    @Command("camera <target> shake set <layer> <type> <intensity> <speed> infinite [attack] [decay]")
+    @Permission("select.op_level.2")
+    public void shakeInfinite(CommandSourceStack source,
+                                @Argument("target") MultiplePlayerSelector playerSelector, @Argument("type") CommandHelpers.ShakeType shakeType, @Argument("layer") int layer,
+                                @Argument("intensity") float intensity, @Argument("speed") float speed,
+                                @Argument("attack") @Default("0") float attack, @Argument("decay") @Default("0") float decay) throws CommandSyntaxException {
+        Collection<ServerPlayer> players = playerSelector.values();
+
+        if(players.isEmpty())
+            throw EntityArgument.NO_PLAYERS_FOUND.create();
+
+        doShake(source, players, shakeType, layer, intensity, speed, Float.POSITIVE_INFINITY, attack, decay);
+    }
+
+    @Command("camera <target> shake clear <layer>")
+    @Permission("select.op_level.2")
+    public void clearShake(CommandSourceStack source, @Argument("target") MultiplePlayerSelector playerSelector, @Argument("type") CommandHelpers.ShakeType shakeType, @Argument("layer") int layer) throws CommandSyntaxException {
+        Collection<ServerPlayer> players = playerSelector.values();
+
+        if(players.isEmpty())
+            throw EntityArgument.NO_PLAYERS_FOUND.create();
+    }
+
+    @Command("camera <target> shake clear all")
+    @Permission("select.op_level.2")
+    public void clearAllShake(CommandSourceStack source, @Argument("target") MultiplePlayerSelector playerSelector, @Argument("type") CommandHelpers.ShakeType shakeType) throws CommandSyntaxException {
+        Collection<ServerPlayer> players = playerSelector.values();
+
+        if(players.isEmpty())
+            throw EntityArgument.NO_PLAYERS_FOUND.create();
     }
 }

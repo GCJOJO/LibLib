@@ -1,5 +1,7 @@
 package io.github.gcjojo.liblib.client;
 
+import dev.architectury.networking.NetworkManager;
+import io.github.gcjojo.liblib.network.LibLibNetwork;
 import io.github.gcjojo.liblib.tween.Easing;
 import io.github.gcjojo.liblib.tween.Interpolator;
 import io.github.gcjojo.liblib.tween.TweenManager;
@@ -22,7 +24,6 @@ public class CustomCameraManager {
     @Setter
     private static boolean isFovActive = false;
     @Getter
-    @Setter
     private static Vec3 position = new Vec3(0, 0, 0);
     @Getter
     @Setter
@@ -51,6 +52,20 @@ public class CustomCameraManager {
     public record ActiveEffect(CameraEffect effect, long startTime){}
 
     static final TreeMap<Integer, ActiveEffect> EFFECTS = new TreeMap<>();
+
+    public static void setPosition(Vec3 newPosition) {
+        position = newPosition;
+        if(isActive())
+            NetworkManager.sendToServer(new LibLibNetwork.ClientCameraPosPayload(position));
+    }
+
+    public static void clearCustomCamera()
+    {
+        CustomCameraManager.setActive(false);
+        CustomCameraManager.setFovActive(false);
+        NetworkManager.sendToServer(new LibLibNetwork.ClientClearCustomCameraPayload());
+        Minecraft.getInstance().levelRenderer.needsUpdate();
+    }
 
     public static boolean hasAnyEffect() { return !EFFECTS.isEmpty(); }
 

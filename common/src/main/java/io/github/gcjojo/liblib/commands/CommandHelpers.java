@@ -25,6 +25,11 @@ public class CommandHelpers {
         EASE_BOUNCE
     }
 
+    public enum ShakeType {
+        POSITIONAL,
+        ROTATIONAL
+    }
+
     public static Easing easeTypeFunctionToEasing(EaseType easeType, EaseFunction easeFunction)
     {
         Easing easing = Easing.LINEAR;

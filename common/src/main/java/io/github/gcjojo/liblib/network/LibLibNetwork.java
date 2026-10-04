@@ -2,9 +2,13 @@ package io.github.gcjojo.liblib.network;
 
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
+import io.github.gcjojo.liblib.CameraChunkLoader;
 import io.github.gcjojo.liblib.LibLib;
+import io.github.gcjojo.liblib.client.CameraEffect;
+import io.github.gcjojo.liblib.client.CameraEffects;
 import io.github.gcjojo.liblib.client.CustomCameraManager;
 import io.github.gcjojo.liblib.client.FadeManager;
+import io.github.gcjojo.liblib.commands.CommandHelpers;
 import io.github.gcjojo.liblib.math.Color;
 import io.github.gcjojo.liblib.tween.Easing;
 import io.netty.buffer.ByteBuf;
@@ -14,6 +18,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -32,12 +37,30 @@ public class LibLibNetwork {
     public static final StreamCodec<ByteBuf, Color> COLOR_STREAM_CODEC = ByteBufCodecs.INT.map(Color::new, Color::getColorInt);
 
     public static void registerPayloadTypes() {
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, ClientClearCustomCameraPayload.TYPE, ClientClearCustomCameraPayload.STREAM_CODEC, (payload, context) -> {
+            context.queue(() -> {
+                ServerPlayer player = (ServerPlayer) context.getPlayer();
+                if(player == null) return;
+
+                CameraChunkLoader.resetPlayerChunkPosition(player);
+            });
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.C2S, ClientCameraPosPayload.TYPE, ClientCameraPosPayload.STREAM_CODEC, (payload, context) -> {
+            context.queue(() -> {
+                ServerPlayer player = (ServerPlayer) context.getPlayer();
+                if(player == null) return;
+
+                CameraChunkLoader.onClientPos(player, payload.position());
+            });
+        });
+
         if (Platform.getEnv() == EnvType.CLIENT) return;
 
-        NetworkManager.registerS2CPayloadType(SendCameraTargetPayload.TYPE, SendCameraTargetPayload.STREAM_CODEC);
-        NetworkManager.registerS2CPayloadType(SendCameraMovementPayload.TYPE, SendCameraMovementPayload.STREAM_CODEC);
-        NetworkManager.registerS2CPayloadType(SendCameraPosTargetPayload.TYPE, SendCameraPosTargetPayload.STREAM_CODEC);
-        NetworkManager.registerS2CPayloadType(SendCameraRotTargetPayload.TYPE, SendCameraRotTargetPayload.STREAM_CODEC);
+        NetworkManager.registerS2CPayloadType(CameraTargetPayload.TYPE, CameraTargetPayload.STREAM_CODEC);
+        NetworkManager.registerS2CPayloadType(CameraMovementPayload.TYPE, CameraMovementPayload.STREAM_CODEC);
+        NetworkManager.registerS2CPayloadType(CameraPosTargetPayload.TYPE, CameraPosTargetPayload.STREAM_CODEC);
+        NetworkManager.registerS2CPayloadType(CameraRotTargetPayload.TYPE, CameraRotTargetPayload.STREAM_CODEC);
 
         NetworkManager.registerS2CPayloadType(HideHudPayload.TYPE, HideHudPayload.STREAM_CODEC);
         NetworkManager.registerS2CPayloadType(LockInputPayload.TYPE, LockInputPayload.STREAM_CODEC);
@@ -49,38 +72,37 @@ public class LibLibNetwork {
         NetworkManager.registerS2CPayloadType(FadePayload.TYPE, FadePayload.STREAM_CODEC);
         NetworkManager.registerS2CPayloadType(ClearFadePayload.TYPE, ClearFadePayload.STREAM_CODEC);
         NetworkManager.registerS2CPayloadType(ClearAllFadesPayload.TYPE, ClearAllFadesPayload.STREAM_CODEC);
+
+        NetworkManager.registerS2CPayloadType(ShakePayload.TYPE, ShakePayload.STREAM_CODEC);
     }
 
     public static void registerClientReceiver() {
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearCameraPayload.TYPE, ClearCameraPayload.STREAM_CODEC, (payload, context) -> {
-            context.queue(() -> {
-                CustomCameraManager.setActive(false);
-                CustomCameraManager.setFovActive(false);
-            });
-        });
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearCameraPayload.TYPE, ClearCameraPayload.STREAM_CODEC, (payload, context) ->
+            context.queue(CustomCameraManager::clearCustomCamera)
+        );
 
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, SendCameraMovementPayload.TYPE, SendCameraMovementPayload.STREAM_CODEC, (payload, context) -> {
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, CameraMovementPayload.TYPE, CameraMovementPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
                 CustomCameraManager.setCameraMovement(payload.oldPos, payload.oldRot, payload.newPos, payload.newRot, payload.easing, payload.easeTime);
                 CustomCameraManager.setActive(true);
             });
         });
 
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, SendCameraTargetPayload.TYPE, SendCameraTargetPayload.STREAM_CODEC, (payload, context) -> {
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, CameraTargetPayload.TYPE, CameraTargetPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
                 CustomCameraManager.setCameraTarget(payload.newPos, payload.newRot, payload.easing, payload.easeTime);
                 CustomCameraManager.setActive(true);
             });
         });
 
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, SendCameraPosTargetPayload.TYPE, SendCameraPosTargetPayload.STREAM_CODEC, (payload, context) -> {
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, CameraPosTargetPayload.TYPE, CameraPosTargetPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
                 CustomCameraManager.setPositionTarget(payload.newPos, payload.easing, payload.easeTime);
                 CustomCameraManager.setActive(true);
             });
         });
 
-        NetworkManager.registerReceiver(NetworkManager.Side.S2C, SendCameraRotTargetPayload.TYPE, SendCameraRotTargetPayload.STREAM_CODEC, (payload, context) -> {
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, CameraRotTargetPayload.TYPE, CameraRotTargetPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
                 CustomCameraManager.setRotationTarget(payload.newRot, payload.easing, payload.easeTime);
                 CustomCameraManager.setActive(true);
@@ -134,6 +156,32 @@ public class LibLibNetwork {
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearAllFadesPayload.TYPE, ClearAllFadesPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(FadeManager::clearAllFade);
         });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ShakePayload.TYPE, ShakePayload.STREAM_CODEC, (payload, context) -> {
+            context.queue(() -> {
+                CameraEffect innerEffect = null;
+                switch(payload.shakeType())
+                {
+                    case POSITIONAL -> innerEffect = CameraEffects.shakePosition(payload.intensity(), payload.speed());
+                    case ROTATIONAL -> innerEffect = CameraEffects.shakeRotation(payload.intensity(), payload.speed());
+                }
+                if(innerEffect == null)
+                    return;
+
+                Enveloppe enveloppe = payload.enveloppe();
+                CameraEffect enveloppeEffect = new CameraEffects.Enveloppe(innerEffect, enveloppe.attack(), enveloppe.duration(), enveloppe.decay());
+
+                CustomCameraManager.setCameraEffect(payload.layer(), enveloppeEffect);
+            });
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearShakePayload.TYPE, ClearShakePayload.STREAM_CODEC, (payload, context) -> {
+            context.queue(() -> CustomCameraManager.clearCameraEffect(payload.layer()));
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearAllShakePayload.TYPE, ClearAllShakePayload.STREAM_CODEC, (payload, context) -> {
+            context.queue(CustomCameraManager::clearCameraEffects);
+        });
     }
 
     public record ClearCameraPayload() implements CustomPacketPayload {
@@ -147,14 +195,14 @@ public class LibLibNetwork {
         }
     }
 
-    public record SendCameraPosTargetPayload(Vec3 newPos, Easing easing, float easeTime) implements CustomPacketPayload {
-        public static final CustomPacketPayload.Type<SendCameraPosTargetPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "send_camera_pos_target"));
+    public record CameraPosTargetPayload(Vec3 newPos, Easing easing, float easeTime) implements CustomPacketPayload {
+        public static final CustomPacketPayload.Type<CameraPosTargetPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "send_camera_pos_target"));
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, SendCameraPosTargetPayload> STREAM_CODEC = StreamCodec.composite(
-                VEC3_STREAM_CODEC, SendCameraPosTargetPayload::newPos,
-                EasingStreamCodec.CODEC, SendCameraPosTargetPayload::easing,
-                ByteBufCodecs.FLOAT, SendCameraPosTargetPayload::easeTime,
-                SendCameraPosTargetPayload::new
+        public static final StreamCodec<RegistryFriendlyByteBuf, CameraPosTargetPayload> STREAM_CODEC = StreamCodec.composite(
+                VEC3_STREAM_CODEC, CameraPosTargetPayload::newPos,
+                EasingStreamCodec.CODEC, CameraPosTargetPayload::easing,
+                ByteBufCodecs.FLOAT, CameraPosTargetPayload::easeTime,
+                CameraPosTargetPayload::new
         );
 
         @Override
@@ -163,14 +211,14 @@ public class LibLibNetwork {
         }
     }
 
-    public record SendCameraRotTargetPayload(Vector3f newRot, Easing easing, float easeTime) implements CustomPacketPayload {
-        public static final CustomPacketPayload.Type<SendCameraRotTargetPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "send_camera_rot_target"));
+    public record CameraRotTargetPayload(Vector3f newRot, Easing easing, float easeTime) implements CustomPacketPayload {
+        public static final CustomPacketPayload.Type<CameraRotTargetPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "send_camera_rot_target"));
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, SendCameraRotTargetPayload> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.VECTOR3F, SendCameraRotTargetPayload::newRot,
-                EasingStreamCodec.CODEC, SendCameraRotTargetPayload::easing,
-                ByteBufCodecs.FLOAT, SendCameraRotTargetPayload::easeTime,
-                SendCameraRotTargetPayload::new
+        public static final StreamCodec<RegistryFriendlyByteBuf, CameraRotTargetPayload> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VECTOR3F, CameraRotTargetPayload::newRot,
+                EasingStreamCodec.CODEC, CameraRotTargetPayload::easing,
+                ByteBufCodecs.FLOAT, CameraRotTargetPayload::easeTime,
+                CameraRotTargetPayload::new
         );
 
         @Override
@@ -179,15 +227,15 @@ public class LibLibNetwork {
         }
     }
 
-    public record SendCameraTargetPayload(Vec3 newPos, Vector3f newRot, Easing easing, float easeTime) implements CustomPacketPayload {
-        public static final CustomPacketPayload.Type<SendCameraTargetPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "send_camera_target"));
+    public record CameraTargetPayload(Vec3 newPos, Vector3f newRot, Easing easing, float easeTime) implements CustomPacketPayload {
+        public static final CustomPacketPayload.Type<CameraTargetPayload> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "send_camera_target"));
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, SendCameraTargetPayload> STREAM_CODEC = StreamCodec.composite(
-                VEC3_STREAM_CODEC, SendCameraTargetPayload::newPos,
-                ByteBufCodecs.VECTOR3F, SendCameraTargetPayload::newRot,
-                EasingStreamCodec.CODEC, SendCameraTargetPayload::easing,
-                ByteBufCodecs.FLOAT, SendCameraTargetPayload::easeTime,
-                SendCameraTargetPayload::new
+        public static final StreamCodec<RegistryFriendlyByteBuf, CameraTargetPayload> STREAM_CODEC = StreamCodec.composite(
+                VEC3_STREAM_CODEC, CameraTargetPayload::newPos,
+                ByteBufCodecs.VECTOR3F, CameraTargetPayload::newRot,
+                EasingStreamCodec.CODEC, CameraTargetPayload::easing,
+                ByteBufCodecs.FLOAT, CameraTargetPayload::easeTime,
+                CameraTargetPayload::new
         );
 
         @Override
@@ -196,25 +244,44 @@ public class LibLibNetwork {
         }
     }
 
-    public record SendCameraMovementPayload(Vec3 oldPos, Vector3f oldRot, Vec3 newPos, Vector3f newRot, Easing easing, float easeTime) implements CustomPacketPayload {
-        public static final Type<SendCameraMovementPayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "send_camera_movement"));
+    public record CameraMovementPayload(Vec3 oldPos, Vector3f oldRot, Vec3 newPos, Vector3f newRot, Easing easing, float easeTime) implements CustomPacketPayload {
+        public static final Type<CameraMovementPayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "send_camera_movement"));
 
-        public static final StreamCodec<ByteBuf, Vec3> VEC3_STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.DOUBLE, Vec3::x,
-                ByteBufCodecs.DOUBLE, Vec3::y,
-                ByteBufCodecs.DOUBLE, Vec3::z,
-                Vec3::new
+        public static final StreamCodec<RegistryFriendlyByteBuf, CameraMovementPayload> STREAM_CODEC = StreamCodec.composite(
+                VEC3_STREAM_CODEC, CameraMovementPayload::oldPos,
+                ByteBufCodecs.VECTOR3F, CameraMovementPayload::oldRot,
+                VEC3_STREAM_CODEC, CameraMovementPayload::newPos,
+                ByteBufCodecs.VECTOR3F, CameraMovementPayload::newRot,
+                EasingStreamCodec.CODEC, CameraMovementPayload::easing,
+                ByteBufCodecs.FLOAT, CameraMovementPayload::easeTime,
+                CameraMovementPayload::new
         );
 
-        public static final StreamCodec<RegistryFriendlyByteBuf, SendCameraMovementPayload> STREAM_CODEC = StreamCodec.composite(
-                VEC3_STREAM_CODEC, SendCameraMovementPayload::oldPos,
-                ByteBufCodecs.VECTOR3F, SendCameraMovementPayload::oldRot,
-                VEC3_STREAM_CODEC, SendCameraMovementPayload::newPos,
-                ByteBufCodecs.VECTOR3F, SendCameraMovementPayload::newRot,
-                EasingStreamCodec.CODEC, SendCameraMovementPayload::easing,
-                ByteBufCodecs.FLOAT, SendCameraMovementPayload::easeTime,
-                SendCameraMovementPayload::new
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    public record ClientCameraPosPayload(Vec3 position) implements CustomPacketPayload {
+        public static final Type<ClientCameraPosPayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "client_camera_position"));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, ClientCameraPosPayload> STREAM_CODEC = StreamCodec.composite(
+                VEC3_STREAM_CODEC, ClientCameraPosPayload::position,
+                ClientCameraPosPayload::new
         );
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    public record ClientClearCustomCameraPayload() implements CustomPacketPayload
+    {
+        public static final Type<ClientClearCustomCameraPayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "client_clear_custom_camera"));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, ClientClearCustomCameraPayload> STREAM_CODEC = StreamCodec.unit(new ClientClearCustomCameraPayload());
 
         @Override
         public Type<? extends CustomPacketPayload> type() {
@@ -363,6 +430,59 @@ public class LibLibNetwork {
         public Type<? extends CustomPacketPayload> type() {
             return TYPE;
         }
+    }
+
+    public record Enveloppe(float duration, float attack, float decay)
+    {
+        public static final StreamCodec<ByteBuf, Enveloppe> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.FLOAT, Enveloppe::duration,
+                ByteBufCodecs.FLOAT, Enveloppe::attack,
+                ByteBufCodecs.FLOAT, Enveloppe::decay,
+                Enveloppe::new
+        );
+    }
+
+    public record ShakePayload(CommandHelpers.ShakeType shakeType, int layer, float intensity, float speed, Enveloppe enveloppe) implements CustomPacketPayload
+    {
+        public static final StreamCodec<ByteBuf, CommandHelpers.ShakeType> SHAKE_TYPE_ENUM_CODEC =
+                ByteBufCodecs.idMapper(id -> CommandHelpers.ShakeType.values()[id], CommandHelpers.ShakeType::ordinal);
+
+        public static final Type<ShakePayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "set_shake"));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, ShakePayload> STREAM_CODEC = StreamCodec.composite(
+                SHAKE_TYPE_ENUM_CODEC, ShakePayload::shakeType,
+                ByteBufCodecs.INT, ShakePayload::layer,
+                ByteBufCodecs.FLOAT, ShakePayload::intensity,
+                ByteBufCodecs.FLOAT, ShakePayload::speed,
+                Enveloppe.STREAM_CODEC, ShakePayload::enveloppe,
+                ShakePayload::new
+        );
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    public record ClearShakePayload(int layer) implements CustomPacketPayload {
+        public static final Type<ClearShakePayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "clear_shake"));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, ClearShakePayload> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.INT, ClearShakePayload::layer,
+                ClearShakePayload::new
+        );
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() { return TYPE; }
+    }
+
+    public record ClearAllShakePayload() implements CustomPacketPayload {
+        public static final Type<ClearAllShakePayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "clear_all_shake"));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, ClearAllShakePayload> STREAM_CODEC = StreamCodec.unit(new ClearAllShakePayload());
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() { return TYPE; }
     }
 
     public static class EasingStreamCodec {
