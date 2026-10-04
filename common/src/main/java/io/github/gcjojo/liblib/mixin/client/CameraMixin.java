@@ -3,8 +3,8 @@ package io.github.gcjojo.liblib.mixin.client;
 import io.github.gcjojo.liblib.client.CameraEffect;
 import io.github.gcjojo.liblib.client.CustomCameraManager;
 import io.github.gcjojo.liblib.utils.MathUtils;
-import net.minecraft.Util;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.phys.Vec3;
@@ -48,9 +48,6 @@ public abstract class CameraMixin {
     private float yRot;
     @Unique
     private float liblib$zRot = 0.0f;
-
-    private float startMs = 0.0f;
-
     @Unique
     public float liblib$zRot() {
         return this.liblib$zRot;
@@ -82,22 +79,14 @@ public abstract class CameraMixin {
     @Shadow
     private Vec3 position;
 
-    @Inject(method = "<init>", at = @At("TAIL"))
-    public void liblib$Camera(CallbackInfo ci)
-    {
-        startMs = Util.getMillis();
-    }
-
     @Inject(method = "setup", at = @At("RETURN"))
     private void liblib$overrideCamera(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
-        float time = (Util.getMillis() - startMs) * 0.0001f;
-
         if (!CustomCameraManager.isActive()) {
             CustomCameraManager.setPosition(this.position);
             CustomCameraManager.setRotation(new Vector3f(this.xRot, this.yRot, this.liblib$zRot));
         }
 
-        if(!CustomCameraManager.isActive() && CustomCameraManager.getEffects().isEmpty())
+        if(!CustomCameraManager.isActive() && !CustomCameraManager.hasAnyEffect())
             return;
 
         Vec3 cameraPos = CustomCameraManager.getPosition();
@@ -105,8 +94,12 @@ public abstract class CameraMixin {
 
         CameraEffect.CameraTransform offsets = CustomCameraManager.computeOffsets();
 
-        this.setPosition(cameraPos.add(offsets.positionOffset()));
+        Vec3 finalCameraPos = cameraPos.add(offsets.positionOffset());
+
+        this.setPosition(finalCameraPos);
         this.liblib$setRotation(cameraRot.add(offsets.rotationOffset()));
+
+        Minecraft.getInstance().levelRenderer.needsUpdate();
     }
 
     @Inject(method = "isDetached", at = @At("HEAD"), cancellable = true)

@@ -7,6 +7,7 @@ import io.github.gcjojo.liblib.tween.TweenSequence;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -49,8 +50,9 @@ public class CustomCameraManager {
 
     public record ActiveEffect(CameraEffect effect, long startTime){}
 
-    @Getter
     static final TreeMap<Integer, ActiveEffect> EFFECTS = new TreeMap<>();
+
+    public static boolean hasAnyEffect() { return !EFFECTS.isEmpty(); }
 
     public static void setCameraMovement(Vec3 newPos, Vector3f newRot)
     {
@@ -152,11 +154,13 @@ public class CustomCameraManager {
     public static void clearCameraEffect(int layer)
     {
         EFFECTS.remove(layer);
+        Minecraft.getInstance().levelRenderer.needsUpdate();
     }
 
     public static void clearCameraEffects()
     {
         EFFECTS.clear();
+        Minecraft.getInstance().levelRenderer.needsUpdate();
     }
 
     public static CameraEffect.CameraTransform computeOffsets()

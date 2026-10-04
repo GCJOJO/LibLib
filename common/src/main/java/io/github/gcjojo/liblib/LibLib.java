@@ -7,8 +7,6 @@ import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import io.github.gcjojo.liblib.api.BlablaLibAPI;
 import io.github.gcjojo.liblib.api.QuestsLibAPI;
-import io.github.gcjojo.liblib.client.CameraEffects;
-import io.github.gcjojo.liblib.client.CustomCameraManager;
 import io.github.gcjojo.liblib.client.FadeManager;
 import io.github.gcjojo.liblib.client.SoundPlayer;
 import io.github.gcjojo.liblib.client.gui.TestGui;
@@ -116,7 +114,7 @@ public final class LibLib {
     }
 
     public static void initClient() {
-        CustomCameraManager.setCameraEffect(0, CameraEffects.shakePosition(0.25f, 10f));
+        //CustomCameraManager.setCameraEffect(0, CameraEffects.shakePosition(0.25f, 10f));
 
         KeyMappingRegistry.register(TEST_SCREEN_KEY);
         KeyMappingRegistry.register(TOGGLE_GUI_PIVOT_KEY);
