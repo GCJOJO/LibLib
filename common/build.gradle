@@ -10,8 +10,8 @@ dependencies {
 
     modImplementation "dev.architectury:architectury:$rootProject.architectury_api_version"
 
-    modApi ("org.incendo:cloud-minecraft-modded-common:${cloud_version}") {
-        transitive = true
-    }
-    api "org.incendo:cloud-annotations:${cloud_annotations_version}"
+    modImplementation "org.incendo:cloud-core:${cloud_core_version}"
+    modImplementation "org.incendo:cloud-minecraft-modded-common:${cloud_version}"
+    modImplementation "org.incendo:cloud-minecraft-extras:${cloud_version}"
+    modImplementation "org.incendo:cloud-annotations:${cloud_annotations_version}"
 }
