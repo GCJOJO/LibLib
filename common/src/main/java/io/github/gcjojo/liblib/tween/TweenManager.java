@@ -21,6 +21,10 @@ public class TweenManager {
         runningSequences.entrySet().removeIf((entry) -> entry.getKey().isFinished());
     }
 
+    public static void removeSequence(TweenSequence sequence) {
+        runningSequences.remove(sequence);
+    }
+
     public enum TweenSide {
         SERVER,
         CLIENT,

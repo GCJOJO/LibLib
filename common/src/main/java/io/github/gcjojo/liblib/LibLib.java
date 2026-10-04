@@ -1,35 +1,29 @@
 package io.github.gcjojo.liblib;
 
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.logging.LogUtils;
 import dev.architectury.event.events.client.ClientTickEvent;
-import dev.architectury.event.events.common.CommandRegistrationEvent;
 import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import io.github.gcjojo.liblib.api.BlablaLibAPI;
 import io.github.gcjojo.liblib.api.QuestsLibAPI;
-import io.github.gcjojo.liblib.client.CustomCameraManager;
 import io.github.gcjojo.liblib.client.SoundPlayer;
 import io.github.gcjojo.liblib.client.gui.TestGui;
 import io.github.gcjojo.liblib.client.gui.elements.GuiElement;
 import io.github.gcjojo.liblib.commands.CameraCommand;
+import io.github.gcjojo.liblib.commands.HideGUICommand;
+import io.github.gcjojo.liblib.commands.LockInputCommand;
 import io.github.gcjojo.liblib.events.LibLibEvents;
 import io.github.gcjojo.liblib.factory.PlayerDataRegistry;
 import io.github.gcjojo.liblib.network.LibLibNetwork;
-import io.github.gcjojo.liblib.tween.Easing;
-import io.github.gcjojo.liblib.tween.Interpolator;
 import io.github.gcjojo.liblib.tween.TweenManager;
-import io.github.gcjojo.liblib.tween.TweenSequence;
 import io.github.gcjojo.liblib.utils.PlayerDataManager;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.phys.Vec3;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
@@ -57,6 +51,20 @@ public final class LibLib {
             GLFW.GLFW_KEY_M,
             String.format("key.categories.%s", LibLib.MOD_ID)
     );
+
+    @Getter
+    @Setter
+    private static boolean hideHud = false;
+    @Getter
+    @Setter
+    private static boolean hideHand = false;
+
+    @Getter
+    @Setter
+    private static boolean lockKeyboardInput = false;
+    @Getter
+    @Setter
+    private static boolean lockMouseInput = false;
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static long lastTick = -1;
@@ -92,10 +100,11 @@ public final class LibLib {
         LibLibNetwork.registerPayloadTypes();
     }
 
-    public static void registerCommands(CommandManager<CommandSourceStack> commandManager)
-    {
+    public static void registerCommands(CommandManager<CommandSourceStack> commandManager) {
         AnnotationParser<CommandSourceStack> annotationParser = new AnnotationParser<>(commandManager, CommandSourceStack.class);
         annotationParser.parse(new CameraCommand());
+        annotationParser.parse(new HideGUICommand());
+        annotationParser.parse(new LockInputCommand());
     }
 
     public static void initClient() {

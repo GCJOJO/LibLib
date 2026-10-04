@@ -9,6 +9,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.server.level.ServerPlayer;
 import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
+import org.incendo.cloud.annotations.Permission;
 import org.incendo.cloud.minecraft.modded.data.Coordinates;
 import org.incendo.cloud.minecraft.modded.data.MultiplePlayerSelector;
 import org.joml.Vector3f;
@@ -34,18 +35,8 @@ public class CameraCommand {
         EASE_BOUNCE
     }
 
-    @Command("camera <target> move <easeTime> <easeType> <easeFunction> pos <pos> rot <yaw> <pitch> <roll>")
-    public void camera(CommandSourceStack source,
-                       @Argument("target") MultiplePlayerSelector targetPlayers,
-                       @Argument("easeTime") float easeTime, @Argument("easeType") EaseType easeType, @Argument("easeFunction") EaseFunction easeFunction,
-                       @Argument("pos") Coordinates cameraPos,
-                       @Argument("yaw") float yaw, @Argument("pitch") float pitch, @Argument("roll") float roll) throws CommandSyntaxException {
-
-        Collection<ServerPlayer> players = targetPlayers.values();
-
-        if(players.isEmpty())
-            throw EntityArgument.NO_PLAYERS_FOUND.create();
-
+    public static Easing easeTypeFunctionToEasing(EaseType easeType, EaseFunction easeFunction)
+    {
         Easing easing = Easing.LINEAR;
         switch(easeFunction) {
             case EASE_SINE -> {
@@ -84,11 +75,74 @@ public class CameraCommand {
                 }
             }
         }
+        return easing;
+    }
 
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.SendCameraPayload(cameraPos.position(), new Vector3f(yaw, pitch, roll),  easing, easeTime));
+    @Command("camera <target> move <easeTime> <easeType> <easeFunction> <oldPos> <oldYaw> <oldPitch> <oldRoll> <newPos> <newYaw> <newPitch> <newRoll>")
+    @Permission("select.op_level.2")
+    public void cameraMovement(CommandSourceStack source,
+                                @Argument("target") MultiplePlayerSelector targetPlayers,
+                                @Argument("easeTime") float easeTime, @Argument("easeType") EaseType easeType, @Argument("easeFunction") EaseFunction easeFunction,
+                                @Argument("oldPos") Coordinates oldPos,
+                                @Argument("oldYaw") float oldYaw, @Argument("oldPitch") float oldPitch, @Argument("oldRoll") float oldRoll,
+                                @Argument("newPos") Coordinates newPos,
+                                @Argument("newYaw") float newYaw, @Argument("newPitch") float newPitch, @Argument("newRoll") float newRoll) throws CommandSyntaxException {
+
+        if(!source.hasPermission(2))
+            throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().create();
+
+        Collection<ServerPlayer> players = targetPlayers.values();
+
+        if(players.isEmpty())
+            throw EntityArgument.NO_PLAYERS_FOUND.create();
+
+        Easing easing = easeTypeFunctionToEasing(easeType, easeFunction);
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.SendCameraMovementPayload(
+                oldPos.position(), new Vector3f(oldYaw, oldPitch, oldRoll),
+                newPos.position(), new Vector3f(newYaw, newPitch, newRoll),
+                easing, easeTime));
+    }
+
+    @Command("camera <target> move <easeTime> <easeType> <easeFunction> pos <pos> rot <yaw> <pitch> <roll>")
+    @Permission("select.op_level.2")
+    public void cameraTarget(CommandSourceStack source,
+                       @Argument("target") MultiplePlayerSelector targetPlayers,
+                       @Argument("easeTime") float easeTime, @Argument("easeType") EaseType easeType, @Argument("easeFunction") EaseFunction easeFunction,
+                       @Argument("pos") Coordinates cameraPos,
+                       @Argument("yaw") float yaw, @Argument("pitch") float pitch, @Argument("roll") float roll) throws CommandSyntaxException {
+
+        if(!source.hasPermission(2))
+            throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().create();
+
+        Collection<ServerPlayer> players = targetPlayers.values();
+
+        if(players.isEmpty())
+            throw EntityArgument.NO_PLAYERS_FOUND.create();
+
+        Easing easing = easeTypeFunctionToEasing(easeType, easeFunction);
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.SendCameraTargetPayload(cameraPos.position(), new Vector3f(yaw, pitch, roll),  easing, easeTime));
+    }
+
+    @Command("camera <target> move <easeTime> <easeType> <easeFunction> pos <pos>")
+    @Permission("select.op_level.2")
+    public void cameraPos(CommandSourceStack source,
+                          @Argument("target") MultiplePlayerSelector targetPlayers,
+                          @Argument("easeTime") float easeTime, @Argument("easeType") EaseType easeType, @Argument("easeFunction") EaseFunction easeFunction,
+                          @Argument("pos") Coordinates cameraPos) throws CommandSyntaxException {
+        if(!source.hasPermission(2))
+            throw CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand().create();
+
+        Collection<ServerPlayer> players = targetPlayers.values();
+
+        if(players.isEmpty())
+            throw EntityArgument.NO_PLAYERS_FOUND.create();
+
+        Easing easing = easeTypeFunctionToEasing(easeType, easeFunction);
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.SendCameraPosTargetPayload(cameraPos.position(), easing, easeTime));
     }
 
     @Command("camera <target> clear")
+    @Permission("select.op_level.2")
     public void clearCamera(CommandSourceStack source, @Argument("target") MultiplePlayerSelector targetPlayers) throws CommandSyntaxException {
         Collection<ServerPlayer> players = targetPlayers.values();
 

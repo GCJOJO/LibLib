@@ -4,7 +4,11 @@
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
-    "client.CameraMixin"
+    "client.CameraMixin",
+    "client.GameRendererMixin",
+    "client.GuiMixin",
+    "client.KeyboardInputMixin",
+    "client.MouseHandlerMixin"
   ],
   "mixins": [
   ],

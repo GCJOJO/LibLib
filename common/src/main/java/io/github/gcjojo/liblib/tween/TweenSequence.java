@@ -57,6 +57,10 @@ public class TweenSequence {
         return this;
     }
 
+    public void stop() {
+        TweenManager.removeSequence(this);
+    }
+
     public boolean update(float delta) {
         if (!playing) return false;
         if (finished) return true;
