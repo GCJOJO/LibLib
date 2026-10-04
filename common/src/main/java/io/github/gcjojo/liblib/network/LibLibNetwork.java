@@ -112,7 +112,7 @@ public class LibLibNetwork {
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearFovPayload.TYPE, ClearFovPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
-
+                CustomCameraManager.clearFov(payload.easing, payload.easeTime);
             });
         });
     }
