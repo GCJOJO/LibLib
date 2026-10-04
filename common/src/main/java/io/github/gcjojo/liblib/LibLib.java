@@ -1,15 +1,18 @@
 package io.github.gcjojo.liblib;
 
 import com.mojang.logging.LogUtils;
+import dev.architectury.event.events.client.ClientPlayerEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import io.github.gcjojo.liblib.api.BlablaLibAPI;
 import io.github.gcjojo.liblib.api.QuestsLibAPI;
+import io.github.gcjojo.liblib.client.FadeManager;
 import io.github.gcjojo.liblib.client.SoundPlayer;
 import io.github.gcjojo.liblib.client.gui.TestGui;
 import io.github.gcjojo.liblib.client.gui.elements.GuiElement;
 import io.github.gcjojo.liblib.commands.CameraCommand;
+import io.github.gcjojo.liblib.commands.FadeCommand;
 import io.github.gcjojo.liblib.commands.HideGUICommand;
 import io.github.gcjojo.liblib.commands.LockInputCommand;
 import io.github.gcjojo.liblib.events.LibLibEvents;
@@ -20,10 +23,12 @@ import io.github.gcjojo.liblib.utils.PlayerDataManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.annotations.AnnotationParser;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
@@ -105,6 +110,7 @@ public final class LibLib {
         annotationParser.parse(new CameraCommand());
         annotationParser.parse(new HideGUICommand());
         annotationParser.parse(new LockInputCommand());
+        annotationParser.parse(new FadeCommand());
     }
 
     public static void initClient() {
@@ -124,6 +130,8 @@ public final class LibLib {
             while (TOGGLE_GUI_SCISSORS_KEY.consumeClick())
                 GuiElement.DEBUG_DRAW_SCISSORS = !GuiElement.DEBUG_DRAW_SCISSORS;
         });
+
+        ClientPlayerEvent.CLIENT_PLAYER_QUIT.register((@Nullable LocalPlayer player) -> FadeManager.clearAllFade());
 
         LibLibNetwork.registerClientReceiver();
     }

@@ -4,6 +4,8 @@ import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import io.github.gcjojo.liblib.LibLib;
 import io.github.gcjojo.liblib.client.CustomCameraManager;
+import io.github.gcjojo.liblib.client.FadeManager;
+import io.github.gcjojo.liblib.math.Color;
 import io.github.gcjojo.liblib.tween.Easing;
 import io.netty.buffer.ByteBuf;
 import net.fabricmc.api.EnvType;
@@ -27,6 +29,8 @@ public class LibLibNetwork {
             Vec3::new
     );
 
+    public static final StreamCodec<ByteBuf, Color> COLOR_STREAM_CODEC = ByteBufCodecs.INT.map(Color::new, Color::getColorInt);
+
     public static void registerPayloadTypes() {
         if (Platform.getEnv() == EnvType.CLIENT) return;
 
@@ -41,12 +45,17 @@ public class LibLibNetwork {
         NetworkManager.registerS2CPayloadType(SetFovPayload.TYPE, SetFovPayload.STREAM_CODEC);
         NetworkManager.registerS2CPayloadType(SetFovVariationPayload.TYPE, SetFovVariationPayload.STREAM_CODEC);
         NetworkManager.registerS2CPayloadType(ClearFovPayload.TYPE, ClearFovPayload.STREAM_CODEC);
+
+        NetworkManager.registerS2CPayloadType(FadePayload.TYPE, FadePayload.STREAM_CODEC);
+        NetworkManager.registerS2CPayloadType(ClearFadePayload.TYPE, ClearFadePayload.STREAM_CODEC);
+        NetworkManager.registerS2CPayloadType(ClearAllFadesPayload.TYPE, ClearAllFadesPayload.STREAM_CODEC);
     }
 
     public static void registerClientReceiver() {
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearCameraPayload.TYPE, ClearCameraPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
                 CustomCameraManager.setActive(false);
+                CustomCameraManager.setFovActive(false);
             });
         });
 
@@ -111,9 +120,19 @@ public class LibLibNetwork {
         });
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearFovPayload.TYPE, ClearFovPayload.STREAM_CODEC, (payload, context) -> {
-            context.queue(() -> {
-                CustomCameraManager.clearFov(payload.easing, payload.easeTime);
-            });
+            context.queue(() -> CustomCameraManager.clearFov(payload.easing, payload.easeTime));
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, FadePayload.TYPE, FadePayload.STREAM_CODEC, (payload, context) -> {
+            context.queue(() -> FadeManager.fade(payload.layer, payload.startColor, payload.endColor, payload.easing, payload.easeTime));
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearFadePayload.TYPE, ClearFadePayload.STREAM_CODEC, (payload, context) -> {
+            context.queue(() -> FadeManager.clearFade(payload.layer));
+        });
+
+        NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearAllFadesPayload.TYPE, ClearAllFadesPayload.STREAM_CODEC, (payload, context) -> {
+            context.queue(FadeManager::clearAllFade);
         });
     }
 
@@ -293,6 +312,52 @@ public class LibLibNetwork {
                 ByteBufCodecs.FLOAT, ClearFovPayload::easeTime,
                 ClearFovPayload::new
         );
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    public record FadePayload(int layer, Color startColor, Color endColor, Easing easing, float easeTime) implements CustomPacketPayload
+    {
+        public static final Type<FadePayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "fade"));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, FadePayload> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.INT, FadePayload::layer,
+                COLOR_STREAM_CODEC, FadePayload::startColor,
+                COLOR_STREAM_CODEC, FadePayload::endColor,
+                EasingStreamCodec.CODEC, FadePayload::easing,
+                ByteBufCodecs.FLOAT, FadePayload::easeTime,
+                FadePayload::new
+        );
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    public record ClearFadePayload(int layer) implements CustomPacketPayload
+    {
+        public static final Type<ClearFadePayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "clear_fade"));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, ClearFadePayload> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.INT, ClearFadePayload::layer,
+                ClearFadePayload::new
+        );
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
+
+    public record ClearAllFadesPayload() implements CustomPacketPayload
+    {
+        public static final Type<ClearAllFadesPayload> TYPE = new Type<>(ResourceLocation.tryBuild(LibLib.MOD_ID, "clear_all_fade"));
+
+        public static final StreamCodec<RegistryFriendlyByteBuf, ClearAllFadesPayload> STREAM_CODEC = StreamCodec.unit(new ClearAllFadesPayload());
 
         @Override
         public Type<? extends CustomPacketPayload> type() {

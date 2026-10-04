@@ -9,6 +9,7 @@ public abstract class Tween {
             onFinishCallback.run();
     }
 
+    @SuppressWarnings("unchecked") // TODO find better solution
     public <T extends Tween> T onFinished(Runnable onFinishCallback) {
         this.onFinishCallback = onFinishCallback;
         return (T) this;
