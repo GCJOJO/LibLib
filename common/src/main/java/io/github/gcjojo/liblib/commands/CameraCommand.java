@@ -9,6 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import org.incendo.cloud.annotation.specifier.Range;
 import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.Command;
 import org.incendo.cloud.annotations.Default;
@@ -18,7 +19,6 @@ import org.incendo.cloud.minecraft.modded.data.MultiplePlayerSelector;
 import org.joml.Vector3f;
 
 import java.util.Collection;
-import java.util.Optional;
 
 public class CameraCommand {
 
@@ -233,34 +233,30 @@ public class CameraCommand {
 
         NetworkManager.sendToPlayers(players, new LibLibNetwork.ClearCameraPayload());
         NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, false));
+        NetworkManager.sendToPlayers(players, new LibLibNetwork.ClearFovPayload(Easing.LINEAR, 0));
     }
 
     @Command("camera <target> fov set <fov> [easeType] [easeFunction] [easeTime]")
     @Permission("select.op_level.2")
     public void setFov(CommandSourceStack source, @Argument("target") MultiplePlayerSelector targetPlayers,
-                       @Argument("fov") double fov,
-                       @Argument("easeType") Optional<EaseType> easeType, @Argument("easeFunction") Optional<EaseFunction> easeFunction, @Argument("easeTime") @Default("0") float easeTime)
+                       @Argument("fov") @Range(min = "0", max = "179") double fov,
+                       @Argument("easeType") @Default("ease_in_out") EaseType easeType, @Argument("easeFunction") @Default("ease_linear") EaseFunction easeFunction, @Argument("easeTime") @Default("0") float easeTime)
             throws CommandSyntaxException {
         Collection<ServerPlayer> players = targetPlayers.values();
 
         if(players.isEmpty())
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        if(easeType.isPresent() != easeFunction.isPresent())
-            throw ERROR_MISMATCHED_EASE.create();
-
-        EaseType resolvedEaseType = easeType.orElse(EaseType.EASE_IN_OUT);
-        EaseFunction resolvedEaseFunction = easeFunction.orElse(EaseFunction.EASE_LINEAR);
-        Easing easing = easeTypeFunctionToEasing(resolvedEaseType, resolvedEaseFunction);
+        Easing easing = easeTypeFunctionToEasing(easeType, easeFunction);
 
         NetworkManager.sendToPlayers(players, new LibLibNetwork.SetFovPayload(fov, easing, easeTime));
     }
 
-    @Command("camera <target> fov set <oldFov> <newFov> <easeType> <easeFunction> <easeTime>")
+    @Command("camera <target> fov set from <oldFov> to <newFov> <easeType> <easeFunction> <easeTime>")
     @Permission("select.op_level.2")
-    public void setFovVariation(CommandSourceStack source, @Argument("target") MultiplePlayerSelector targetPlayers,
-                       @Argument("oldFov") double oldFov, @Argument("newFov") double newFov,
-                       @Argument("easeType") EaseType easeType, @Argument("easeFunction") EaseFunction easeFunction, @Argument("easeTime") @Default("0") float easeTime)
+    public void setFovFromTo(CommandSourceStack source, @Argument("target") MultiplePlayerSelector targetPlayers,
+                             @Argument("oldFov") @Range(min = "0", max = "179") double oldFov, @Argument("newFov") @Range(min = "0", max = "179") double newFov,
+                             @Argument("easeType") EaseType easeType, @Argument("easeFunction") EaseFunction easeFunction, @Argument("easeTime") @Default("0") float easeTime)
             throws CommandSyntaxException {
         Collection<ServerPlayer> players = targetPlayers.values();
 
@@ -275,19 +271,14 @@ public class CameraCommand {
     @Command("camera <target> fov clear [easeType] [easeFunction] [easeTime]")
     @Permission("select.op_level.2")
     public void clearFov(CommandSourceStack source, @Argument("target") MultiplePlayerSelector targetPlayers,
-                         @Argument("easeType") Optional<EaseType> easeType, @Argument("easeFunction") Optional<EaseFunction> easeFunction, @Argument("easeTime") @Default("0") float easeTime)
+                         @Argument("easeType") @Default("ease_in_out") EaseType easeType, @Argument("easeFunction") @Default("ease_linear") EaseFunction easeFunction, @Argument("easeTime") @Default("0") float easeTime)
             throws CommandSyntaxException {
         Collection<ServerPlayer> players = targetPlayers.values();
 
         if(players.isEmpty())
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        if(easeType.isPresent() != easeFunction.isPresent())
-            throw ERROR_MISMATCHED_EASE.create();
-
-        EaseType resolvedEaseType = easeType.orElse(EaseType.EASE_IN_OUT);
-        EaseFunction resolvedEaseFunction = easeFunction.orElse(EaseFunction.EASE_LINEAR);
-        Easing easing = easeTypeFunctionToEasing(resolvedEaseType, resolvedEaseFunction);
+        Easing easing = easeTypeFunctionToEasing(easeType, easeFunction);
 
         NetworkManager.sendToPlayers(players, new LibLibNetwork.ClearFovPayload(easing, easeTime));
     }

@@ -97,26 +97,17 @@ public class CustomCameraManager {
     public static void setTargetFov(double newTargetFov, Easing easing, float easeTime)
     {
         isFovActive = true;
-
-        if(fovSequence == null)
-            fovSequence.stop();
-
-        targetFov = newTargetFov;
-        fovSequence = TweenManager.createTweenSequence(TweenManager.TweenSide.CLIENT);
-
-        fovSequence.tweenProperty(CustomCameraManager::getFov, CustomCameraManager::setFov, Interpolator.DOUBLE)
-                .duration(easeTime)
-                .easing(easing)
-                .values(fov, targetFov);
-
-        fovSequence.play();
+        if(easeTime == 0)
+            fov = newTargetFov;
+        else
+            setFovFromTo(fov, newTargetFov, easing, easeTime);
     }
 
-    public static void setFovVariation(double oldFov, double newTargetFov, Easing easing, float easeTime)
+    public static void setFovFromTo(double oldFov, double newTargetFov, Easing easing, float easeTime)
     {
         isFovActive = true;
 
-        if(fovSequence == null)
+        if(fovSequence != null)
             fovSequence.stop();
 
         fov = oldFov;
@@ -139,7 +130,7 @@ public class CustomCameraManager {
             return;
         }
 
-        setFovVariation(fov, internalFov, easing, easeTime);
+        setFovFromTo(fov, internalFov, easing, easeTime);
         fovSequence.tweenCallback(() -> isFovActive = false);
     }
 }

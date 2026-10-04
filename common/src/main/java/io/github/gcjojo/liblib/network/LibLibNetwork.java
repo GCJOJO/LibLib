@@ -106,7 +106,7 @@ public class LibLibNetwork {
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, SetFovVariationPayload.TYPE, SetFovVariationPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
-                CustomCameraManager.setFovVariation(payload.oldFov, payload.newFov, payload.easing, payload.easeTime);
+                CustomCameraManager.setFovFromTo(payload.oldFov, payload.newFov, payload.easing, payload.easeTime);
             });
         });
 
