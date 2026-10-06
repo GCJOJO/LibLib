@@ -18,6 +18,8 @@ public class GuiScreen extends Screen {
     boolean renderBackground = true;
     int currentTick = 0;
 
+    public void shouldRenderBackground(boolean shouldRenderBackground) { renderBackground = shouldRenderBackground; }
+
     public GuiScreen(Component component) {
         super(component);
     }

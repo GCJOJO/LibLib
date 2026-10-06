@@ -110,6 +110,13 @@ public class CustomCameraManager {
 
     public static void setCameraTarget(Vec3 newPos, Vector3f newRot, Easing easing, float easeTime)
     {
+        if(easeTime == 0)
+        {
+            setPosition(newPos);
+            setRotation(newRot);
+            return;
+        }
+
         setPositionTarget(newPos, easing, easeTime);
         setRotationTarget(newRot, easing, easeTime);
     }
