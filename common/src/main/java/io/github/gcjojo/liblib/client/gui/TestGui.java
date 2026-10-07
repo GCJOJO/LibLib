@@ -4,6 +4,9 @@ import io.github.gcjojo.liblib.LibLib;
 import io.github.gcjojo.liblib.client.gui.elements.*;
 import io.github.gcjojo.liblib.math.Color;
 import io.github.gcjojo.liblib.tween.*;
+import lombok.Getter;
+import lombok.Setter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
@@ -18,7 +21,15 @@ public class TestGui extends GuiScreen {
     GuiScrollbarContainer boxContainer2;
     GuiProgressBar progressBar;
     GuiRichText richText;
+    GuiTextEdit textEdit;
+    GuiMultilineTextEdit multilineTextEdit;
 
+    @Getter
+    @Setter
+    String editBoxText = "";
+    @Getter
+    @Setter
+    String multilineEditBoxText = "";
     int seconds = 0;
 
     public TestGui(Component component) {
@@ -121,6 +132,14 @@ public class TestGui extends GuiScreen {
         richText.setDrawnCharacters(50);
         char c = richText.getLastDrawCharacter();
         addElement(richText);
+
+        textEdit = new GuiTextEdit(this, Minecraft.getInstance().font, 160, 20, editBoxText, this::setEditBoxText);
+        textEdit.setPosition(new Vec2(this.width * 0.5f, this.height * 0.3f));
+        addElement(textEdit);
+
+        multilineTextEdit = new GuiMultilineTextEdit(this, Minecraft.getInstance().font, 160, 200, multilineEditBoxText, this::setMultilineEditBoxText);
+        multilineTextEdit.setPosition(new Vec2(this.width * 0.5f, this.height * 0.65f));
+        addElement(multilineTextEdit);
     }
 
     @Override

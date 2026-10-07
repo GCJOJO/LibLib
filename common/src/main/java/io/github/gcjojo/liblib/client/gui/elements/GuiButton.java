@@ -45,7 +45,6 @@ public class GuiButton extends GuiElement {
         text.setHorizontalAlignment(GuiText.TextHorizontalAlignment.Center);
         text.setVerticalAlignment(GuiText.TextVerticalAlignment.Center);
 
-
         int buttonX = (int) (-getWidth());
         int buttonY = (int) (-getHeight());
 
@@ -90,6 +89,13 @@ public class GuiButton extends GuiElement {
 
         hoveredNineSlice.setNineSliceWidth((int) Math.max(getWidth(), getMinimumButtonHeight()));
         hoveredNineSlice.setNineSliceHeight((int) Math.max(getHeight(), getMinimumButtonHeight()));
+
+        int buttonX = (int) (-Math.max(getWidth(), getMinimumButtonHeight()) * 0.5f);
+        int buttonY = (int) (-Math.max(getHeight(), getMinimumButtonHeight()) * 0.5f);
+
+        inactiveNineSlice.setPosition(new Vec2(buttonX, buttonY));
+        activeNineSlice.setPosition(new Vec2(buttonX, buttonY));
+        hoveredNineSlice.setPosition(new Vec2(buttonX, buttonY));
     }
 
     @Override

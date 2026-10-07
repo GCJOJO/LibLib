@@ -28,8 +28,8 @@ public class GuiRichText extends GuiText {
     public GuiRichText(Screen screen, Component text) {
         super(screen, text);
         this.text = text;
-        resize();
         refreshCharacters();
+        resize();
     }
 
     public void refreshCharacters() {
@@ -40,8 +40,8 @@ public class GuiRichText extends GuiText {
 
     public void setText(Component newText) {
         this.text = newText;
-        resize();
         refreshCharacters();
+        resize();
     }
 
     public float computeTextWidth() {

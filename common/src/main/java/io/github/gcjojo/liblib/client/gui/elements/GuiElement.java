@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import io.github.gcjojo.liblib.math.Color;
 import io.github.gcjojo.liblib.utils.MathUtils;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,6 +32,9 @@ public abstract class GuiElement {
     protected Color color = Color.WHITE;
     protected Vec2 rotationPivot = new Vec2(0.5f, 0.5f);
     protected boolean isVisible = true;
+
+    @Setter(AccessLevel.NONE)
+    protected boolean isFocused = false;
 
     protected List<GuiElement> children = new ArrayList<>();
 
@@ -107,7 +111,7 @@ public abstract class GuiElement {
         poseStack.pushPose();
 
 
-        poseStack.translate(drawOffset.x + this.position.x + parentPosition.x, drawOffset.y + this.position.y + parentPosition.y, 0.0f);
+        poseStack.translate(drawOffset.x + this.position.x, drawOffset.y + this.position.y, 0.0f);
         poseStack.scale(scale.x, scale.y, 1.0f);
         //Merci ClaudeSlop
         poseStack.rotateAround(Axis.ZP.rotationDegrees(angle), rotationPivotX, rotationPivotY, 0.0f);
@@ -171,6 +175,14 @@ public abstract class GuiElement {
     public void onChildrenUpdate() {
     }
 
+    public void focus() {
+        isFocused = true;
+    }
+
+    public void unfocus(){
+        isFocused = false;
+    }
+
     // Merci Claude Slop
     public Vec2 localToScreen(Vec2 localPos) {
         float pivotWorldX = position.x + rotationPivot.x;
@@ -227,7 +239,11 @@ public abstract class GuiElement {
     }
 
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (isMouseOver(mouseX, mouseY)) return mouseClickedContent(mouseX, mouseY, button);
+        if (isMouseOver(mouseX, mouseY)) {
+            focus();
+            return mouseClickedContent(mouseX, mouseY, button);
+        }
+        unfocus();
         return false;
     }
 
@@ -237,6 +253,14 @@ public abstract class GuiElement {
         for (GuiElement child : children) {
             if (child.mouseClicked(localPos.x, localPos.y, button)) return true;
         }
+        return false;
+    }
+
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        return false;
+    }
+
+    public boolean charTyped(char codePoint, int modifiers) {
         return false;
     }
 

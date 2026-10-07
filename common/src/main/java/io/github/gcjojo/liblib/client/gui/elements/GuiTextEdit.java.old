@@ -1,0 +1,170 @@
+package io.github.gcjojo.liblib.client.gui.elements;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec2;
+import org.lwjgl.glfw.GLFW;
+
+public class GuiTextEdit extends GuiElement {
+    private GuiNineSliced textFieldTexture;
+    private GuiNineSliced textFieldHightlightedTexture;
+    private String textValue;
+    private GuiText textDisplay;
+
+    protected String text;
+    protected int cursorPosition = 0;
+    protected int selectionAnchor = 0;
+
+    private Minecraft minecraft;
+
+    private int selStart() { return Math.min(cursorPosition, selectionAnchor); }
+    private int selEnd() { return Math.min(cursorPosition, selectionAnchor); }
+
+    public GuiTextEdit(Screen screen) {
+        super(screen);
+        minecraft = Minecraft.getInstance();
+        setup(0, 0);
+    }
+
+    @Override
+    protected void setSizeInternal(Vec2 newSize) {
+
+    }
+
+    public GuiTextEdit(Screen screen, int width, int height)
+    {
+        super(screen);
+        setup(width, height);
+    }
+
+    private void setup(int width, int height) {
+        setSize(new Vec2(width, height));
+
+        textFieldTexture = new GuiNineSliced(getScreen(), GuiNineSliced.TEXT_FIELD, (int)(-width * 0.5f), (int)(-height * 0.5f), width, height);
+        textFieldHightlightedTexture = new GuiNineSliced(getScreen(), GuiNineSliced.TEXT_FIELD_HIGHLIGHTED, (int)(-width * 0.5f), (int)(-height * 0.5f), width, height);
+        textDisplay = new GuiText(getScreen(), Component.empty());
+
+        addChild(textFieldTexture);
+        addChild(textFieldHightlightedTexture);
+        addChild(textDisplay);
+    }
+
+    private void rebuildDisplay(){
+        textDisplay.text = Component.literal(textValue);
+    }
+
+    private void insertText(String text){
+        // Insert a cursorPosition
+        textValue += text;
+        rebuildDisplay();
+    }
+
+    private void selectAll(){
+        selectionAnchor = 0;
+        cursorPosition = textValue.length();
+
+    }
+
+    private void copySelection(){
+        if(!hasSelection())
+            return;
+        minecraft.keyboardHandler.setClipboard(getSelection());
+        rebuildDisplay();
+    }
+
+    private void pasteText() {
+        insertText(minecraft.keyboardHandler.getClipboard());
+    }
+
+    private void deleteSelection() {
+        if(!hasSelection())
+            return;
+
+        String left = textValue.substring(0, currentSelection.startPos);
+        String right = textValue.substring(currentSelection.endPos);
+        textValue = left + right;
+        rebuildDisplay();
+    }
+
+    private void deleteBackward() {
+
+    }
+
+    private String getSelection() {
+        return textValue.substring(selStart(), selEnd());
+    }
+
+    private boolean hasSelection() {
+        return currentSelection != TextSelection.NO_SELECTION;
+    }
+
+    @Override
+    public boolean supportsShaderColor() {
+        return false;
+    }
+
+    @Override
+    protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
+
+    }
+
+    @Override
+    protected boolean mouseClickedContent(double mouseX, double mouseY, int button) {
+
+        return super.mouseClickedContent(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if(Screen.isSelectAll(keyCode)) {
+            selectAll();
+            return true;
+        }
+        if(Screen.isCopy(keyCode)) {
+            copySelection();
+            return true;
+        }
+        if(Screen.isPaste(keyCode)){
+            pasteText();
+            return true;
+        }
+        if(Screen.isCut(keyCode)){
+            copySelection();
+            deleteSelection();
+            return true;
+        }
+
+        switch(keyCode) {
+            case GLFW.GLFW_KEY_BACKSPACE -> {
+                if(hasSelection())
+                    deleteSelection();
+                else
+                    deleteBackward();
+                return true;
+            }
+        }
+
+
+        return false;
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers){
+        insertText(Character.toString(codePoint));
+        return true;
+    }
+
+    @Override
+    public void tick() {
+        if(isFocused()) {
+            textFieldTexture.setVisible(false);
+            textFieldHightlightedTexture.setVisible(true);
+        }
+        else {
+            textFieldTexture.setVisible(true);
+            textFieldHightlightedTexture.setVisible(false);
+        }
+    }
+}

@@ -104,4 +104,28 @@ public class GuiScreen extends Screen {
 
         return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        for (int i = elements.size() - 1; i >= 0; i--) {
+            GuiElement element = elements.get(i);
+            if (element.isFocused())
+                if (element.keyPressed(keyCode, scanCode, modifiers))
+                    return true;
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char codePoint, int modifiers){
+        for (int i = elements.size() - 1; i >= 0; i--) {
+            GuiElement element = elements.get(i);
+            if (element.isFocused())
+                if (element.charTyped(codePoint, modifiers))
+                    return true;
+        }
+
+        return super.charTyped(codePoint, modifiers);
+    }
 }
