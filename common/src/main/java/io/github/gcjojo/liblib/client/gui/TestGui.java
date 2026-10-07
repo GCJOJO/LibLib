@@ -60,7 +60,7 @@ public class TestGui extends GuiScreen {
 
         boxContainer = new GuiScrollbarContainer(this, (int) (this.width * 0.12f), (int) (this.height * 0.4f), GuiBoxContainer.BoxDirection.Vertical);
         boxContainer.setPosition(new Vec2(10, 10));
-        //boxContainer.setPosition(new Vec2((int) (this.width * 0.5f), (int) (this.height * 0.5f)));
+        //boxContainer.setPosition(new Vec2((int) (this.textWidth * 0.5f), (int) (this.height * 0.5f)));
         for (int i = 0; i <= 24; i++) {
             GuiText childText = new GuiText(this, Component.literal(String.format("Text %s", i)));
             boxContainer.addChild(childText);
@@ -69,7 +69,7 @@ public class TestGui extends GuiScreen {
             String buttonName = String.format("Button %s", i);
             GuiButton childButton = new GuiButton(this, Component.literal(buttonName), () ->
                     LibLib.getLogger().info("Clicked on {}", buttonName));
-            childButton.setDrawOffset(new Vec2(childButton.getButtonWidth() * 0.5f, childButton.getButtonHeight() * 0.5f));
+            childButton.setDrawOffset(new Vec2(childButton.getWidth() * 0.5f, childButton.getHeight() * 0.5f));
             boxContainer.addChild(childButton);
         }
 
@@ -85,7 +85,7 @@ public class TestGui extends GuiScreen {
         addElement(boxContainer2);
 
         progressBar = new GuiProgressBar(this, 0, 50, 25, 6, this.width / 2, GuiProgressBar.ProgressBarDirection.Horizontal, GuiProgressBar.BarColor.Green, GuiProgressBar.BarColor.DarkPurple);
-        //progressBar.setPosition(new Vec2(this.width * 0.5f - progressBar.getLength() * 0.5f, this.height * 0.95f));
+        //progressBar.setPosition(new Vec2(this.textWidth * 0.5f - progressBar.getLength() * 0.5f, this.height * 0.95f));
 
         addElement(progressBar);
 
@@ -117,7 +117,7 @@ public class TestGui extends GuiScreen {
         richText.setPosition(new Vec2(this.width * 0.5f, this.height * 0.7f));
         richText.setHorizontalAlignment(GuiText.TextHorizontalAlignment.Center);
         richText.setVerticalAlignment(GuiText.TextVerticalAlignment.Center);
-        richText.setWidth(100);
+        richText.setTextWidth(100);
         richText.setDrawnCharacters(50);
         char c = richText.getLastDrawCharacter();
         addElement(richText);

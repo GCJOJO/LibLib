@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec2;
 
 @Getter
 @Setter
@@ -27,16 +28,13 @@ public class GuiImage extends GuiElement {
     public static ResourceLocation BOSS_BAR_YELLOW_BACKGROUND = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/yellow_background.png");
     public static ResourceLocation BOSS_BAR_YELLOW_PROGRESS = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/yellow_progress.png");*/
     protected ResourceLocation imagePath;
-    protected int imageWidth;
-    protected int imageHeight;
     protected ImageHorizontalAlignment imageHorizontalAlignment;
     protected ImageVerticalAlignment imageVerticalAlignment;
 
     public GuiImage(Screen screen, ResourceLocation imagePath, int imageWidth, int imageHeight) {
         super(screen);
         this.imagePath = imagePath;
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
+        this.size = new Vec2(imageWidth, imageHeight);
         this.color = Color.WHITE;
 
         imageHorizontalAlignment = ImageHorizontalAlignment.CENTER;
@@ -47,8 +45,7 @@ public class GuiImage extends GuiElement {
                     ImageHorizontalAlignment horizontalAlignment, ImageVerticalAlignment verticalAlignment) {
         super(screen);
         this.imagePath = imagePath;
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
+        this.size = new Vec2(imageWidth, imageHeight);
         this.color = Color.WHITE;
 
         imageHorizontalAlignment = horizontalAlignment;
@@ -56,18 +53,12 @@ public class GuiImage extends GuiElement {
     }
 
     @Override
-    public Rect2i getBoundingBox() {
-        return new Rect2i(0, 0, 0, 0);
+    protected void setSizeInternal(Vec2 newSize) {
+        resize();
     }
 
-    @Override
-    public float getContentsWidth() {
-        return imageWidth;
-    }
+    public void resize() {
 
-    @Override
-    public float getContentsHeight() {
-        return imageHeight;
     }
 
     @Override
@@ -77,20 +68,20 @@ public class GuiImage extends GuiElement {
 
     @Override
     protected void drawContents(GuiGraphics graphics, double mouseX, double mouseY, float partialTick) {
-        int x = 0;
-        int y = 0;
+        float x = 0;
+        float y = 0;
 
         switch (imageHorizontalAlignment) {
-            case CENTER -> x = -imageWidth / 2;
-            case RIGHT -> x = -imageWidth;
+            case CENTER -> x = -getWidth() / 2;
+            case RIGHT -> x = -getWidth();
         }
 
         switch (imageVerticalAlignment) {
-            case CENTER -> y = -imageHeight / 2;
-            case BOTTOM -> y = -imageHeight;
+            case CENTER -> y = -getHeight() / 2;
+            case BOTTOM -> y = -getHeight();
         }
 
-        graphics.blit(imagePath, x, y, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+        graphics.blit(imagePath, (int)x, (int)y, 0, 0, (int)getWidth(), (int)getHeight(), (int)getWidth(), (int)getHeight());
     }
 
     @Override

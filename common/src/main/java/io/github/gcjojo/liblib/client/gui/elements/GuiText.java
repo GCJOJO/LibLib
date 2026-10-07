@@ -10,6 +10,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec2;
 
 @Getter
 @Setter
@@ -26,6 +27,9 @@ public class GuiText extends GuiElement {
         this.horizontalAlignment = TextHorizontalAlignment.Left;
         this.verticalAlignment = TextVerticalAlignment.Top;
         this.color = Color.WHITE;
+
+        this.setWidth(font.width(text));
+        this.setHeight(font.lineHeight);
     }
 
     @Override
@@ -34,13 +38,8 @@ public class GuiText extends GuiElement {
     }
 
     @Override
-    public float getContentsWidth() {
-        return font.width(text);
-    }
+    protected void setSizeInternal(Vec2 newSize) {
 
-    @Override
-    public float getContentsHeight() {
-        return font.lineHeight;
     }
 
     @Override
@@ -72,7 +71,7 @@ public class GuiText extends GuiElement {
             default -> verticalAlignmentMultiplier = 0.0f;
         }
 
-        pose.translate(-getContentsWidth() * horizontalAlignmentMultiplier, -getContentsHeight() * verticalAlignmentMultiplier, 0.0f);
+        pose.translate(-getWidth() * horizontalAlignmentMultiplier, -getHeight() * verticalAlignmentMultiplier, 0.0f);
 
         Component drawnText = text;
         if (drawnCharacters > -1) {

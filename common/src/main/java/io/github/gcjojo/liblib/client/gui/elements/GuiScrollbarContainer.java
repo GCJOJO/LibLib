@@ -15,7 +15,7 @@ public class GuiScrollbarContainer extends GuiBoxContainer {
 
     public GuiScrollbarContainer(Screen screen, int containerWidth, int containerHeight, BoxDirection direction) {
         super(screen, containerWidth, containerHeight, direction);
-        int length = direction == BoxDirection.Vertical ? (int) getContainerHeight() : (int) getContainerWidth();
+        int length = direction == BoxDirection.Vertical ? (int) getHeight() : (int) getWidth();
         length = (int) (length * 0.5f);
 
         this.scrollbar = new GuiSlider(screen, SCROLLBAR_WIDTH, length, 0, 1, 0.05f,
@@ -37,7 +37,7 @@ public class GuiScrollbarContainer extends GuiBoxContainer {
     }
 
     public float getContainerSize() {
-        return direction == BoxDirection.Vertical ? getContainerHeight() : getContainerWidth();
+        return direction == BoxDirection.Vertical ? getHeight() : getWidth();
     }
 
     @Override
@@ -45,13 +45,13 @@ public class GuiScrollbarContainer extends GuiBoxContainer {
         super.onChildrenUpdate();
         //scrollbar.setStep((float) 1 / getContentsSize());
 
-        int length = direction == BoxDirection.Vertical ? this.containerHeight : this.containerWidth;
-        scrollbar.setLength(length);
+        float length = direction == BoxDirection.Vertical ? this.getHeight() : this.getWidth();
+        scrollbar.setLength((int) length);
         scrollbar.refresh();
 
         switch (direction) {
-            case Horizontal -> scrollbar.setPosition(new Vec2(0, this.getContainerHeight()));
-            case Vertical -> scrollbar.setPosition(new Vec2(this.getContainerWidth() * 0.5f, 0));
+            case Horizontal -> scrollbar.setPosition(new Vec2(0, this.getHeight()));
+            case Vertical -> scrollbar.setPosition(new Vec2(this.getWidth() * 0.5f, 0));
         }
     }
 

@@ -15,6 +15,9 @@ public class GuiNineSliced extends GuiElement {
     public static final ResourceLocation BUTTON_DISABLED = ResourceLocation.tryParse("widget/button_disabled");
     public static final ResourceLocation BUTTON_HOVERED = ResourceLocation.tryParse("widget/button_highlighted");
 
+    public static final ResourceLocation TEXT_FIELD = ResourceLocation.tryParse("widget/text_field");
+    public static final ResourceLocation TEXT_FIELD_HIGHLIGHTED = ResourceLocation.tryParse("widget/text_field_highlighted");
+
     protected ResourceLocation atlasLocation;
     protected int nineSliceWidth;
     protected int nineSliceHeight;
@@ -32,14 +35,17 @@ public class GuiNineSliced extends GuiElement {
         return new Rect2i(0, 0, 0, 0);
     }
 
-    @Override
     public float getContentsWidth() {
         return nineSliceWidth;
     }
 
-    @Override
     public float getContentsHeight() {
         return nineSliceHeight;
+    }
+
+    @Override
+    protected void setSizeInternal(Vec2 newSize) {
+
     }
 
     @Override

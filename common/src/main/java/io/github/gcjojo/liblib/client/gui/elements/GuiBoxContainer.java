@@ -19,7 +19,6 @@ public class GuiBoxContainer extends GuiContainer {
         this.direction = direction;
     }
 
-    @Override
     public float getContentsWidth() {
         if (direction == BoxDirection.Vertical) {
             float maxWidth = 0.0f;
@@ -38,7 +37,6 @@ public class GuiBoxContainer extends GuiContainer {
         return width;
     }
 
-    @Override
     public float getContentsHeight() {
         if (direction == BoxDirection.Horizontal) {
             float maxHeight = 0.0f;
@@ -64,8 +62,8 @@ public class GuiBoxContainer extends GuiContainer {
 
     public boolean isChildrenVisible(GuiElement child) {
         if (direction == BoxDirection.Horizontal)
-            return child.position.x + child.getWidth() >= 0 && child.position.x <= this.getContainerWidth();
-        return child.position.y + child.getHeight() >= 0 && child.position.y <= this.getContainerHeight();
+            return child.position.x + child.getWidth() >= 0 && child.position.x <= this.getWidth();
+        return child.position.y + child.getHeight() >= 0 && child.position.y <= this.getHeight();
     }
 
     @Override
@@ -83,8 +81,8 @@ public class GuiBoxContainer extends GuiContainer {
 
     public boolean doesChildrenOverflow() {
         if (direction == BoxDirection.Horizontal)
-            return getContentsWidth() > this.containerWidth;
-        return getContentsHeight() > this.containerHeight;
+            return getContentsWidth() > this.getWidth();
+        return getContentsHeight() > this.getHeight();
     }
 
     @Override
@@ -101,12 +99,12 @@ public class GuiBoxContainer extends GuiContainer {
             switch (direction) {
                 case Horizontal -> {
                     newPosition = new Vec2(offset, 0);
-                    offset += child.getContentsWidth() + childrenMargin;
+                    offset += child.getWidth() + childrenMargin;
                     break;
                 }
                 case Vertical -> {
                     newPosition = new Vec2(0, offset);
-                    offset += child.getContentsHeight() + childrenMargin;
+                    offset += child.getHeight() + childrenMargin;
                     break;
                 }
             }

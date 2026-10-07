@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.phys.Vec2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +23,12 @@ public class GuiRichText extends GuiText {
     private List<StyledChar> styledCharacters = new ArrayList<>();
     @Getter
     @Setter
-    private float width = 0.0f;
+    private float textWidth = 0.0f;
 
     public GuiRichText(Screen screen, Component text) {
         super(screen, text);
         this.text = text;
+        resize();
         refreshCharacters();
     }
 
@@ -38,11 +40,11 @@ public class GuiRichText extends GuiText {
 
     public void setText(Component newText) {
         this.text = newText;
+        resize();
         refreshCharacters();
     }
 
-    @Override
-    public float getContentsWidth() {
+    public float computeTextWidth() {
         float maxWidth = 0.0f;
         float lineWidth = 0.0f;
         for (StyledChar c : styledCharacters) {
@@ -63,8 +65,7 @@ public class GuiRichText extends GuiText {
         return maxWidth;
     }
 
-    @Override
-    public float getContentsHeight() {
+    public float computeTextHeight() {
         float height = 0.0f;
         final float lineHeight = font.lineHeight;
         for (StyledChar c : styledCharacters) {
@@ -72,6 +73,10 @@ public class GuiRichText extends GuiText {
             height += lineHeight;
         }
         return height;
+    }
+
+    public void resize() {
+        setSize(new Vec2(computeTextWidth(), computeTextHeight()));
     }
 
     @Override
@@ -106,14 +111,14 @@ public class GuiRichText extends GuiText {
                 continue;
             }
 
-            if (width > 0.0f && c.character() == ' ') {
+            if (textWidth > 0.0f && c.character() == ' ') {
                 float wordWidth = 0.0f;
                 for (int j = i + 1; j < styledCharacters.size(); j++) {
                     if (styledCharacters.get(j).character() == ' ') break;
                     wordWidth += font.width(String.valueOf(styledCharacters.get(j).character()));
                 }
 
-                if (cursorX + wordWidth >= width) {
+                if (cursorX + wordWidth >= textWidth) {
                     cursorX = 0;
                     cursorY += lineHeight;
                     continue;
@@ -146,7 +151,7 @@ public class GuiRichText extends GuiText {
                 default -> verticalAlignmentMultiplier = 0.0f;
             }
             // TODO Maybe do this per line
-            poseStack.translate(-getContentsWidth() * horizontalAlignmentMultiplier, -getContentsHeight() * verticalAlignmentMultiplier, 0.0f);
+            poseStack.translate(-getWidth() * horizontalAlignmentMultiplier, -getHeight() * verticalAlignmentMultiplier, 0.0f);
 
             poseStack.translate(cursorX + transform.offsetX(), cursorY + transform.offsetY(), 0.0f);
             poseStack.scale(transform.scale(), transform.scale(), 1.0f);

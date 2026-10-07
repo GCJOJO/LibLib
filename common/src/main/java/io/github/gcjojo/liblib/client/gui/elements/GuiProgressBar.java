@@ -76,14 +76,17 @@ public class GuiProgressBar extends GuiElement {
         return (this.currentValue / Math.abs(endValue - startValue)) * (float) length;
     }
 
-    @Override
     public float getContentsWidth() {
         return direction == ProgressBarDirection.Horizontal ? length : thickness;
     }
 
-    @Override
     public float getContentsHeight() {
         return direction == ProgressBarDirection.Vertical ? length : thickness;
+    }
+
+    @Override
+    protected void setSizeInternal(Vec2 newSize) {
+
     }
 
     @Override

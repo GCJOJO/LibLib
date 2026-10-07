@@ -77,18 +77,21 @@ public class GuiSlider extends GuiElement {
         }
     }
 
-    @Override
     public float getContentsWidth() {
         if (direction == SliderDirection.Horizontal)
             return this.length;
         return this.thickness;
     }
 
-    @Override
     public float getContentsHeight() {
         if (direction == SliderDirection.Vertical)
             return this.length;
         return this.thickness;
+    }
+
+    @Override
+    protected void setSizeInternal(Vec2 newSize) {
+
     }
 
     @Override

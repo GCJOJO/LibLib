@@ -4,30 +4,23 @@ import lombok.Getter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.world.phys.Vec2;
 
 @Getter
 public abstract class GuiContainer extends GuiElement {
-    int containerWidth;
-    int containerHeight;
-
     public GuiContainer(Screen screen, int containerWidth, int containerHeight) {
         super(screen);
-        this.containerWidth = containerWidth;
-        this.containerHeight = containerHeight;
+        setSize(new Vec2(containerWidth, containerHeight));
     }
 
-    public float getContainerWidth() {
-        return this.containerWidth * scale.x;
-    }
+    public void setSizeInternal(Vec2 newSize) {
 
-    public float getContainerHeight() {
-        return this.containerHeight * scale.y;
     }
 
     // TODO Fix bounds going in wrong direction
     @Override
     public Rect2i getBoundingBox() {
-        return new Rect2i((int) (containerWidth * 0.5f), (int) (containerHeight * 0.5f), (int) (containerWidth * 0.5f), (int) (containerHeight * 0.5f));
+        return new Rect2i((int) (getWidth() * 0.5f), (int) (getHeight() * 0.5f), (int) (getWidth() * 0.5f), (int) (getHeight() * 0.5f));
     }
 
     @Override

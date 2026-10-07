@@ -26,6 +26,7 @@ public abstract class GuiElement {
     protected Vec2 position = Vec2.ZERO;
     protected Vec2 drawOffset = Vec2.ZERO;
     protected float angle = 0.0f;
+    protected Vec2 size = Vec2.ZERO;
     protected Vec2 scale = Vec2.ONE;
     protected Color color = Color.WHITE;
     protected Vec2 rotationPivot = new Vec2(0.5f, 0.5f);
@@ -39,17 +40,32 @@ public abstract class GuiElement {
         this.screen = screen;
     }
 
-    public float getWidth() {
-        return getContentsWidth() * scale.x;
+    public void setWidth(float newWidth) { setSize(new Vec2(newWidth, size.y)); }
+    public void setHeight(float newHeight) { setSize(new Vec2(size.x, newHeight)); }
+    public void setSize(Vec2 newSize) { size = newSize; setSizeInternal(newSize); }
+    protected abstract void setSizeInternal(Vec2 newSize);
+
+    public void setCorners(float minX, float minY, float maxX, float maxY)
+    {
+        float width = Math.abs(maxX - minX);
+        float height = Math.abs(maxY - minY);
+
+        float newX = minX + width * 0.5f;
+        float newY = minY + height * 0.5f;
+
+        setPosition(new Vec2(newX, newY));
+        setSize(new Vec2(width, height));
     }
 
-    public float getHeight() {
-        return getContentsHeight() * scale.y;
+    public float getWidth() { return getSize().x; }
+
+    public float getHeight() { return getSize().y; }
+
+    public float getScaledWidth() { return getWidth() * scale.x; }
+
+    public float getScaledHeight() {
+        return getHeight() * scale.y;
     }
-
-    public abstract float getContentsWidth();
-
-    public abstract float getContentsHeight();
 
     public abstract boolean supportsShaderColor();
 
@@ -91,7 +107,7 @@ public abstract class GuiElement {
         poseStack.pushPose();
 
 
-        poseStack.translate(drawOffset.x + this.position.x, drawOffset.y + this.position.y, 0.0f);
+        poseStack.translate(drawOffset.x + this.position.x + parentPosition.x, drawOffset.y + this.position.y + parentPosition.y, 0.0f);
         poseStack.scale(scale.x, scale.y, 1.0f);
         //Merci ClaudeSlop
         poseStack.rotateAround(Axis.ZP.rotationDegrees(angle), rotationPivotX, rotationPivotY, 0.0f);

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.world.phys.Vec2;
 
 @Getter
 @Setter
@@ -21,16 +22,12 @@ public class GuiColorRect extends GuiElement {
         this.right = right;
         this.top = top;
         this.color = color;
+        //setCorners(left, bottom, right, top);
     }
 
     @Override
-    public float getContentsWidth() {
-        return right - left;
-    }
+    protected void setSizeInternal(Vec2 newSize) {
 
-    @Override
-    public float getContentsHeight() {
-        return top - bottom;
     }
 
     @Override
