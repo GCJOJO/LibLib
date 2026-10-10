@@ -83,5 +83,4 @@ public interface Easing {
                 ? (1 - EASE_OUT.apply(1 - 2 * t)) / 2
                 : (1 + EASE_OUT.apply(2 * t - 1)) / 2;
     }
-
 }

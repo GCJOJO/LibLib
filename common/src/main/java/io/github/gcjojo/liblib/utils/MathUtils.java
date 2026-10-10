@@ -1,5 +1,6 @@
 package io.github.gcjojo.liblib.utils;
 
+import io.github.gcjojo.liblib.math.CameraMath;
 import io.github.gcjojo.liblib.math.Color;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -74,5 +75,9 @@ public class MathUtils {
                 lerp(start.green, end.green, progress),
                 lerp(start.blue, end.blue, progress)
         );
+    }
+
+    public static Vector3f quaternion_lerp(Vector3f start, Vector3f end, float progress) {
+        return CameraMath.toRot(CameraMath.toQuat(start).slerp(CameraMath.toQuat(end), progress));
     }
 }

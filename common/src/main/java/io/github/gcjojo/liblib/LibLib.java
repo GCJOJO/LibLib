@@ -118,7 +118,7 @@ public final class LibLib {
     }
 
     public static void initClient() {
-        //CustomCameraManager.setCameraEffect(0, CameraEffects.shakePosition(0.25f, 10f));
+        //ClientCameraManager.setCameraEffect(0, CameraEffects.shakePosition(0.25f, 10f));
 
         KeyMappingRegistry.register(TEST_SCREEN_KEY);
         KeyMappingRegistry.register(TOGGLE_GUI_PIVOT_KEY);
@@ -126,6 +126,9 @@ public final class LibLib {
         KeyMappingRegistry.register(TOGGLE_GUI_SCISSORS_KEY);
 
         ClientTickEvent.CLIENT_POST.register(minecraft -> {
+            // TODO FIX BEFORE USING THIS FEATURE
+            // ClientCameraManager.tick();
+
             while (TEST_SCREEN_KEY.consumeClick()) {
                 minecraft.setScreen(new TestGui(Component.literal("Test GUI")));
             }

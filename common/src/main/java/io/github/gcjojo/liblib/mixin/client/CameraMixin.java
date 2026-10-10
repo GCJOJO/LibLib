@@ -1,7 +1,7 @@
 package io.github.gcjojo.liblib.mixin.client;
 
 import io.github.gcjojo.liblib.client.CameraEffect;
-import io.github.gcjojo.liblib.client.CustomCameraManager;
+import io.github.gcjojo.liblib.client.ClientCameraManager;
 import io.github.gcjojo.liblib.utils.MathUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -54,9 +54,9 @@ public abstract class CameraMixin {
     }
 
     @Unique
-    void liblib$setRotation(float yaw, float pitch, float roll) {
-        this.xRot = MathUtils.toRad(yaw);
-        this.yRot = MathUtils.toRad(pitch);
+    void liblib$setRotation(float pitch, float yaw, float roll) {
+        this.xRot = MathUtils.toRad(pitch);
+        this.yRot = MathUtils.toRad(yaw);
         this.liblib$zRot = MathUtils.toRad(roll);
 
         this.rotation.rotationYXZ((float) Math.PI - this.yRot, -this.xRot, this.liblib$zRot);
@@ -67,10 +67,7 @@ public abstract class CameraMixin {
 
     @Unique
     void liblib$setRotation(Vector3f rotation) {
-        float yaw = rotation.x;
-        float pitch = rotation.y;
-        float roll = rotation.z;
-        this.liblib$setRotation(yaw, pitch, roll);
+        this.liblib$setRotation(rotation.x, rotation.y, rotation.z);
     }
 
     @Shadow
@@ -81,23 +78,23 @@ public abstract class CameraMixin {
 
     @Inject(method = "setup", at = @At("RETURN"))
     private void liblib$overrideCamera(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
-        if (!CustomCameraManager.isActive()) {
-            CustomCameraManager.setPosition(this.position);
-            CustomCameraManager.setRotation(new Vector3f(this.xRot, this.yRot, this.liblib$zRot));
+        if (!ClientCameraManager.isActive()) {
+            ClientCameraManager.setPosition(this.position);
+            ClientCameraManager.setRotation(new Vector3f(this.xRot, this.yRot, this.liblib$zRot));
         }
 
-        if(!CustomCameraManager.isActive() && !CustomCameraManager.hasAnyEffect())
+        if(!ClientCameraManager.isActive() && !ClientCameraManager.hasAnyEffect())
             return;
 
-        Vec3 cameraPos = CustomCameraManager.getPosition();
-        Vector3f cameraRot = CustomCameraManager.getRotation();
+        Vec3 cameraPos = ClientCameraManager.getPosition();
+        Vector3f cameraRot = ClientCameraManager.getRotation();
 
-        CameraEffect.CameraTransform offsets = CustomCameraManager.computeOffsets();
+        CameraEffect.CameraTransform offsets = ClientCameraManager.computeOffsets();
 
         Vec3 finalCameraPos = cameraPos.add(offsets.positionOffset());
 
         this.setPosition(finalCameraPos);
-        this.liblib$setRotation(cameraRot.add(offsets.rotationOffset()));
+        this.liblib$setRotation(cameraRot.add(offsets.rotationOffset(), new Vector3f()));
 
         Minecraft.getInstance().levelRenderer.needsUpdate();
     }
@@ -105,7 +102,7 @@ public abstract class CameraMixin {
     @Inject(method = "isDetached", at = @At("HEAD"), cancellable = true)
     private void liblib$isDetached(CallbackInfoReturnable<Boolean> cir)
     {
-        if(CustomCameraManager.isActive())
+        if(ClientCameraManager.isActive())
             cir.setReturnValue(true);
     }
 }

@@ -16,7 +16,7 @@ import org.joml.Vector3f;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-public class CustomCameraManager {
+public class ClientCameraManager {
     @Getter
     @Setter
     private static boolean isActive = false;
@@ -45,6 +45,8 @@ public class CustomCameraManager {
     @Setter
     private static double targetFov = 0;
 
+    private static int tickCount = 0;
+
     static TweenSequence positionSequence = null;
     static TweenSequence rotationSequence = null;
     static TweenSequence fovSequence = null;
@@ -55,14 +57,27 @@ public class CustomCameraManager {
 
     public static void setPosition(Vec3 newPosition) {
         position = newPosition;
-        if(isActive())
+        // TODO FIX BEFORE USING THIS FEATURE
+        /*if(isActive())
+            NetworkManager.sendToServer(new LibLibNetwork.ClientCameraPosPayload(position));*/
+    }
+
+    public static void tick() {
+        if(!isActive())
+            return;
+
+        tickCount++;
+        if(tickCount >= 10)
+        {
+            tickCount = 0;
             NetworkManager.sendToServer(new LibLibNetwork.ClientCameraPosPayload(position));
+        }
     }
 
     public static void clearCustomCamera()
     {
-        CustomCameraManager.setActive(false);
-        CustomCameraManager.setFovActive(false);
+        ClientCameraManager.setActive(false);
+        ClientCameraManager.setFovActive(false);
         NetworkManager.sendToServer(new LibLibNetwork.ClientClearCustomCameraPayload());
         Minecraft.getInstance().levelRenderer.needsUpdate();
     }
@@ -84,7 +99,7 @@ public class CustomCameraManager {
         targetPosition = newPos;
         positionSequence = TweenManager.createTweenSequence(TweenManager.TweenSide.CLIENT);
 
-        positionSequence.tweenProperty(CustomCameraManager::getPosition, CustomCameraManager::setPosition, Interpolator.VEC3)
+        positionSequence.tweenProperty(ClientCameraManager::getPosition, ClientCameraManager::setPosition, Interpolator.VEC3)
                 .duration(easeTime)
                 .easing(easing)
                 .values(position, targetPosition);
@@ -100,7 +115,7 @@ public class CustomCameraManager {
         targetRotation = newRot;
         rotationSequence = TweenManager.createTweenSequence(TweenManager.TweenSide.CLIENT);
 
-        rotationSequence.tweenProperty(CustomCameraManager::getRotation, CustomCameraManager::setRotation, Interpolator.VECTOR3F)
+        rotationSequence.tweenProperty(ClientCameraManager::getRotation, ClientCameraManager::setRotation, Interpolator.VECTOR3F)
                 .duration(easeTime)
                 .easing(easing)
                 .values(rotation, targetRotation);
@@ -147,7 +162,7 @@ public class CustomCameraManager {
         targetFov = newTargetFov;
         fovSequence = TweenManager.createTweenSequence(TweenManager.TweenSide.CLIENT);
 
-        fovSequence.tweenProperty(CustomCameraManager::getFov, CustomCameraManager::setFov, Interpolator.DOUBLE)
+        fovSequence.tweenProperty(ClientCameraManager::getFov, ClientCameraManager::setFov, Interpolator.DOUBLE)
                 .duration(easeTime)
                 .easing(easing)
                 .values(fov, targetFov);

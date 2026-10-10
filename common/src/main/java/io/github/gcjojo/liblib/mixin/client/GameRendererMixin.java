@@ -1,7 +1,7 @@
 package io.github.gcjojo.liblib.mixin.client;
 
 import io.github.gcjojo.liblib.LibLib;
-import io.github.gcjojo.liblib.client.CustomCameraManager;
+import io.github.gcjojo.liblib.client.ClientCameraManager;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Matrix4f;
@@ -18,13 +18,13 @@ public abstract class GameRendererMixin {
     @Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
     private void liblib$getFov(Camera camera, float f, boolean bl, CallbackInfoReturnable<Double> cir)
     {
-        if(CustomCameraManager.isFovActive()) {
-            CustomCameraManager.setInternalFov(cir.getReturnValue());
-            cir.setReturnValue(CustomCameraManager.getFov());
+        if(ClientCameraManager.isFovActive()) {
+            ClientCameraManager.setInternalFov(cir.getReturnValue());
+            cir.setReturnValue(ClientCameraManager.getFov());
         }
         else {
-            CustomCameraManager.setFov(cir.getReturnValue());
-            CustomCameraManager.setInternalFov(cir.getReturnValue());
+            ClientCameraManager.setFov(cir.getReturnValue());
+            ClientCameraManager.setInternalFov(cir.getReturnValue());
         }
     }
 

@@ -6,7 +6,7 @@ import io.github.gcjojo.liblib.CameraChunkLoader;
 import io.github.gcjojo.liblib.LibLib;
 import io.github.gcjojo.liblib.client.CameraEffect;
 import io.github.gcjojo.liblib.client.CameraEffects;
-import io.github.gcjojo.liblib.client.CustomCameraManager;
+import io.github.gcjojo.liblib.client.ClientCameraManager;
 import io.github.gcjojo.liblib.client.FadeManager;
 import io.github.gcjojo.liblib.commands.CommandHelpers;
 import io.github.gcjojo.liblib.math.Color;
@@ -78,34 +78,34 @@ public class LibLibNetwork {
 
     public static void registerClientReceiver() {
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearCameraPayload.TYPE, ClearCameraPayload.STREAM_CODEC, (payload, context) ->
-            context.queue(CustomCameraManager::clearCustomCamera)
+            context.queue(ClientCameraManager::clearCustomCamera)
         );
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, CameraMovementPayload.TYPE, CameraMovementPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
-                CustomCameraManager.setCameraMovement(payload.oldPos, payload.oldRot, payload.newPos, payload.newRot, payload.easing, payload.easeTime);
-                CustomCameraManager.setActive(true);
+                ClientCameraManager.setCameraMovement(payload.oldPos, payload.oldRot, payload.newPos, payload.newRot, payload.easing, payload.easeTime);
+                ClientCameraManager.setActive(true);
             });
         });
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, CameraTargetPayload.TYPE, CameraTargetPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
-                CustomCameraManager.setCameraTarget(payload.newPos, payload.newRot, payload.easing, payload.easeTime);
-                CustomCameraManager.setActive(true);
+                ClientCameraManager.setCameraTarget(payload.newPos, payload.newRot, payload.easing, payload.easeTime);
+                ClientCameraManager.setActive(true);
             });
         });
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, CameraPosTargetPayload.TYPE, CameraPosTargetPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
-                CustomCameraManager.setPositionTarget(payload.newPos, payload.easing, payload.easeTime);
-                CustomCameraManager.setActive(true);
+                ClientCameraManager.setPositionTarget(payload.newPos, payload.easing, payload.easeTime);
+                ClientCameraManager.setActive(true);
             });
         });
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, CameraRotTargetPayload.TYPE, CameraRotTargetPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
-                CustomCameraManager.setRotationTarget(payload.newRot, payload.easing, payload.easeTime);
-                CustomCameraManager.setActive(true);
+                ClientCameraManager.setRotationTarget(payload.newRot, payload.easing, payload.easeTime);
+                ClientCameraManager.setActive(true);
             });
         });
 
@@ -131,18 +131,18 @@ public class LibLibNetwork {
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, SetFovPayload.TYPE, SetFovPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
-                CustomCameraManager.setTargetFov(payload.newFov, payload.easing, payload.easeTime);
+                ClientCameraManager.setTargetFov(payload.newFov, payload.easing, payload.easeTime);
             });
         });
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, SetFovVariationPayload.TYPE, SetFovVariationPayload.STREAM_CODEC, (payload, context) -> {
             context.queue(() -> {
-                CustomCameraManager.setFovFromTo(payload.oldFov, payload.newFov, payload.easing, payload.easeTime);
+                ClientCameraManager.setFovFromTo(payload.oldFov, payload.newFov, payload.easing, payload.easeTime);
             });
         });
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearFovPayload.TYPE, ClearFovPayload.STREAM_CODEC, (payload, context) -> {
-            context.queue(() -> CustomCameraManager.clearFov(payload.easing, payload.easeTime));
+            context.queue(() -> ClientCameraManager.clearFov(payload.easing, payload.easeTime));
         });
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, FadePayload.TYPE, FadePayload.STREAM_CODEC, (payload, context) -> {
@@ -171,16 +171,16 @@ public class LibLibNetwork {
                 Enveloppe enveloppe = payload.enveloppe();
                 CameraEffect enveloppeEffect = new CameraEffects.Enveloppe(innerEffect, enveloppe.attack(), enveloppe.duration(), enveloppe.decay());
 
-                CustomCameraManager.setCameraEffect(payload.layer(), enveloppeEffect);
+                ClientCameraManager.setCameraEffect(payload.layer(), enveloppeEffect);
             });
         });
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearShakePayload.TYPE, ClearShakePayload.STREAM_CODEC, (payload, context) -> {
-            context.queue(() -> CustomCameraManager.clearCameraEffect(payload.layer()));
+            context.queue(() -> ClientCameraManager.clearCameraEffect(payload.layer()));
         });
 
         NetworkManager.registerReceiver(NetworkManager.Side.S2C, ClearAllShakePayload.TYPE, ClearAllShakePayload.STREAM_CODEC, (payload, context) -> {
-            context.queue(CustomCameraManager::clearCameraEffects);
+            context.queue(ClientCameraManager::clearCameraEffects);
         });
     }
 

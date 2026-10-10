@@ -1,7 +1,7 @@
 package io.github.gcjojo.liblib.commands;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.architectury.networking.NetworkManager;
+import io.github.gcjojo.liblib.CameraManager;
 import io.github.gcjojo.liblib.network.LibLibNetwork;
 import io.github.gcjojo.liblib.tween.Easing;
 import net.minecraft.commands.CommandSourceStack;
@@ -39,11 +39,18 @@ public class CameraCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraMovementPayload(
+
+        CameraManager.setCameraMovement(players,
                 oldPos.position(), new Vector3f(oldYaw, oldPitch, oldRoll),
                 newPos.position(), new Vector3f(newYaw, newPitch, newRoll),
-                easing, easeTime));
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
+                easing, easeTime);
+        CameraManager.hideHud(players, LibLibNetwork.HideHudPayload.HideHudElement.Hand, true);
+
+        /*NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraMovementPayload(
+                oldPos.position(), new Vector3f(oldYaw, oldPitch, oldRoll),
+                newPos.position(), new Vector3f(newYaw, newPitch, newRoll),
+                easing, easeTime));*/
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
     @Command("camera <target> set pos <pos> rot <yaw> <pitch> <roll>")
@@ -61,8 +68,11 @@ public class CameraCommand {
         if(players.isEmpty())
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraTargetPayload(cameraPos.position(), new Vector3f(yaw, pitch, roll),  Easing.LINEAR, 0));
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
+        CameraManager.setCameraTarget(players, cameraPos.position(), new Vector3f(yaw, pitch, roll), Easing.LINEAR, 0);
+        CameraManager.hideHud(players, LibLibNetwork.HideHudPayload.HideHudElement.Hand, true);
+
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraTargetPayload(cameraPos.position(), new Vector3f(yaw, pitch, roll),  Easing.LINEAR, 0));
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
     @Command("camera <target> set pos <pos>")
@@ -78,8 +88,11 @@ public class CameraCommand {
         if(players.isEmpty())
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraPosTargetPayload(cameraPos.position(), Easing.LINEAR, 0));
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
+        CameraManager.setCameraPosition(players, cameraPos.position(), Easing.LINEAR, 0);
+        CameraManager.hideHud(players, LibLibNetwork.HideHudPayload.HideHudElement.Hand, true);
+
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraPosTargetPayload(cameraPos.position(), Easing.LINEAR, 0));
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
     @Command("camera <target> set rot <yaw> <pitch> <roll>")
@@ -95,8 +108,11 @@ public class CameraCommand {
         if(players.isEmpty())
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraRotTargetPayload(new Vector3f(yaw, pitch, roll), Easing.LINEAR, 0));
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
+        CameraManager.setCameraRotation(players, new Vector3f(yaw, pitch, roll), Easing.LINEAR, 0);
+        CameraManager.hideHud(players, LibLibNetwork.HideHudPayload.HideHudElement.Hand, true);
+
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraRotTargetPayload(new Vector3f(yaw, pitch, roll), Easing.LINEAR, 0));
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
     @Command("camera <target> move <easeTime> <easeType> <easeFunction> pos <pos> rot <yaw> <pitch> <roll>")
@@ -116,8 +132,12 @@ public class CameraCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraTargetPayload(cameraPos.position(), new Vector3f(yaw, pitch, roll),  easing, easeTime));
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
+
+        CameraManager.setCameraTarget(players, cameraPos.position(), new Vector3f(yaw, pitch, roll), easing, easeTime);
+        CameraManager.hideHud(players, LibLibNetwork.HideHudPayload.HideHudElement.Hand, true);
+
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraTargetPayload(cameraPos.position(), new Vector3f(yaw, pitch, roll),  easing, easeTime));
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
     @Command("camera <target> move <easeTime> <easeType> <easeFunction> pos <pos>")
@@ -135,8 +155,10 @@ public class CameraCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraPosTargetPayload(cameraPos.position(), easing, easeTime));
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
+        CameraManager.setCameraPosition(players, cameraPos.position(), easing, easeTime);
+        CameraManager.hideHud(players, LibLibNetwork.HideHudPayload.HideHudElement.Hand, true);
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraPosTargetPayload(cameraPos.position(), easing, easeTime));
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
     @Command("camera <target> move <easeTime> <easeType> <easeFunction> rot <yaw> <pitch> <roll>")
@@ -154,8 +176,11 @@ public class CameraCommand {
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraRotTargetPayload(new Vector3f(yaw, pitch, roll), easing, easeTime));
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
+        CameraManager.setCameraRotation(players, new Vector3f(yaw, pitch, roll), easing, easeTime);
+        CameraManager.hideHud(players, LibLibNetwork.HideHudPayload.HideHudElement.Hand, true);
+
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.CameraRotTargetPayload(new Vector3f(yaw, pitch, roll), easing, easeTime));
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, true));
     }
 
     @Command("camera <target> clear")
@@ -166,9 +191,13 @@ public class CameraCommand {
         if(players.isEmpty())
             throw EntityArgument.NO_PLAYERS_FOUND.create();
 
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.ClearCameraPayload());
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, false));
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.ClearFovPayload(Easing.LINEAR, 0));
+        CameraManager.clearCamera(players);
+        CameraManager.hideHud(players, LibLibNetwork.HideHudPayload.HideHudElement.Hand, false);
+        CameraManager.clearFov(players, Easing.LINEAR, 0);
+
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.ClearCameraPayload());
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.HideHudPayload(LibLibNetwork.HideHudPayload.HideHudElement.Hand, false));
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.ClearFovPayload(Easing.LINEAR, 0));
     }
 
     @Command("camera <target> fov set <fov> [easeType] [easeFunction] [easeTime]")
@@ -184,7 +213,8 @@ public class CameraCommand {
 
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
 
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.SetFovPayload(fov, easing, easeTime));
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.SetFovPayload(fov, easing, easeTime));
+        CameraManager.setFov(players, fov, easing, easeTime);
     }
 
     @Command("camera <target> fov set from <oldFov> to <newFov> <easeType> <easeFunction> <easeTime>")
@@ -200,7 +230,8 @@ public class CameraCommand {
 
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
 
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.SetFovVariationPayload(oldFov, newFov, easing, easeTime));
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.SetFovVariationPayload(oldFov, newFov, easing, easeTime));
+        CameraManager.setFov(players, oldFov, newFov, easing, easeTime);
     }
 
     @Command("camera <target> fov clear [easeType] [easeFunction] [easeTime]")
@@ -215,11 +246,13 @@ public class CameraCommand {
 
         Easing easing = CommandHelpers.easeTypeFunctionToEasing(easeType, easeFunction);
 
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.ClearFovPayload(easing, easeTime));
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.ClearFovPayload(easing, easeTime));
+        CameraManager.clearFov(players, easing, easeTime);
     }
 
     public static void doShake(CommandSourceStack source, Collection<ServerPlayer> players, CommandHelpers.ShakeType shakeType, int layer, float intensity, float speed, float duration, float attack, float decay) {
-        NetworkManager.sendToPlayers(players, new LibLibNetwork.ShakePayload(shakeType, layer, intensity, speed, new LibLibNetwork.Enveloppe(duration, attack, decay)));
+        //NetworkManager.sendToPlayers(players, new LibLibNetwork.ShakePayload(shakeType, layer, intensity, speed, new LibLibNetwork.Enveloppe(duration, attack, decay)));
+        CameraManager.shake(players, layer, shakeType, intensity, speed, duration, attack, decay);
     }
 
     @Command("camera <target> shake set <layer> <type> <intensity> <speed> <duration> [attack] [decay]")
@@ -257,6 +290,8 @@ public class CameraCommand {
 
         if(players.isEmpty())
             throw EntityArgument.NO_PLAYERS_FOUND.create();
+
+        CameraManager.clearShake(players, layer);
     }
 
     @Command("camera <target> shake clear all")
@@ -266,5 +301,7 @@ public class CameraCommand {
 
         if(players.isEmpty())
             throw EntityArgument.NO_PLAYERS_FOUND.create();
+
+        CameraManager.clearAllShake(players);
     }
 }
