@@ -31,6 +31,7 @@ public final class EasingCodec {
             });
 
     static {
+        register("constant", Easing.CONSTANT);
         register("linear", Easing.LINEAR);
 
         register("sine_in", Easing.Sine.EASE_IN);

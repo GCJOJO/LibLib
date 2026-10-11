@@ -3,6 +3,7 @@ package io.github.gcjojo.liblib.tween;
 @FunctionalInterface
 public interface Easing {
     // https://easings.net/
+    Easing CONSTANT = (t) -> t >= 1.0f ? 1.0f : 0.0f;
     Easing LINEAR = (t) -> t;
 
     float apply(float t);
