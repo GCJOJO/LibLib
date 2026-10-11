@@ -7,6 +7,7 @@ import dev.architectury.event.events.common.PlayerEvent;
 import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
 import io.github.gcjojo.liblib.api.BlablaLibAPI;
+import io.github.gcjojo.liblib.api.CutsceneLibAPI;
 import io.github.gcjojo.liblib.api.QuestsLibAPI;
 import io.github.gcjojo.liblib.client.FadeManager;
 import io.github.gcjojo.liblib.client.SoundPlayer;
@@ -77,8 +78,10 @@ public final class LibLib {
     private static SoundPlayer SOUND_PLAYER;
     private static PlayerDataManager PLAYER_DATA_MANAGER;
 
+
     private static BlablaLibAPI BLABLALIB_API = new BlablaLibAPI.EmptyBlablaLibAPI();
     private static QuestsLibAPI QUESTSLIB_API = new QuestsLibAPI.EmptyQuestsLibAPI();
+    private static CutsceneLibAPI CUTSCENELIB_API = new CutsceneLibAPI.EmptyCutsceneLibAPI();
 
     public static void init() {
         LibLibEventManager.registerEvents();
@@ -176,6 +179,15 @@ public final class LibLib {
     public static void setQuestsLibAPI(QuestsLibAPI api) {
         QUESTSLIB_API = api;
     }
+
+    public static CutsceneLibAPI getCutscenelibAPI() {
+        return CUTSCENELIB_API;
+    }
+
+    public static void setCutsceneLibAPI(CutsceneLibAPI api) {
+        CUTSCENELIB_API = api;
+    }
+
 
     public static Logger getLogger() {
         return LOGGER;

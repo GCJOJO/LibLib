@@ -4,11 +4,13 @@ package io.github.gcjojo.liblib.tween;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 // Claude L + get good Slop
-public final class EasingCodec {
+public final class Easings {
     private static final Map<String, Easing> BY_NAME = new LinkedHashMap<>();
     private static final Map<Easing, String> BY_VALUE = new LinkedHashMap<>();
 
@@ -17,6 +19,10 @@ public final class EasingCodec {
             throw new IllegalArgumentException("Easing already registered : " + name);
         BY_VALUE.put(easing, name);
     }
+
+    public static Set<String> names() { return Collections.unmodifiableSet(BY_NAME.keySet()); }
+    public static Easing get(String name) { return BY_NAME.get(name); }
+    public static String nameOf(Easing easing) { return BY_VALUE.get(easing); }
 
     public static final Codec<Easing> CODEC = Codec.STRING.flatXmap(
             name -> {
@@ -71,5 +77,5 @@ public final class EasingCodec {
         register("bounce_in_out", Easing.Bounce.EASE_IN_OUT);
     }
 
-    private EasingCodec() {}
+    private Easings() {}
 }

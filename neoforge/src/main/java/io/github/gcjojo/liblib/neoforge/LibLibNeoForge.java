@@ -10,7 +10,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.incendo.cloud.SenderMapper;
 import org.incendo.cloud.execution.ExecutionCoordinator;
 import org.incendo.cloud.neoforge.NeoForgeServerCommandManager;
@@ -43,7 +42,6 @@ public final class LibLibNeoForge {
         @SubscribeEvent
         public void onRenderFrame(RenderFrameEvent.Pre event) {
             TweenManager.updateSequences(event.getPartialTick().getGameTimeDeltaTicks(), TweenManager.TweenSide.CLIENT);
-            
         }
     }
 }
