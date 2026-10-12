@@ -4,7 +4,6 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import io.github.gcjojo.liblib.LibLib;
-import io.github.gcjojo.liblib.client.ClientProfileResolver;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -28,7 +27,6 @@ import net.minecraft.world.level.Level;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
@@ -180,9 +178,6 @@ public class Mannequin extends Avatar {
 
         if (!this.level().isClientSide && this.level().getServer() != null && !profile.isResolved()) {
             profile.resolve().thenAcceptAsync(this::setProfile, this.level().getServer());
-        }
-        if(this.level().isClientSide && this.level().getServer() == null && !profile.isResolved()) {
-            ClientProfileResolver.resolveClientProfile(profile, this::setProfile);
         }
     }
 
