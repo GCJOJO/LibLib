@@ -15,6 +15,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
@@ -59,6 +60,9 @@ import java.util.Set;
  * /data merge entity @e[type=liblib:mannequin,limit=1,sort=nearest] {pose:"swimming"}
  * /data get entity @e[type=liblib:mannequin,limit=1,sort=nearest]
  *
+ * /summon liblib:mannequin ~ ~ ~ {walk_speed:1.0f}
+ * /data merge entity @e[type=liblib:mannequin,limit=1,sort=nearest] {walk_speed:0.5f}
+ * /data merge entity @e[type=liblib:mannequin,limit=1,sort=nearest] {walk_speed:0.0f}
  * </pre>
  */
 public class Mannequin extends Avatar {
@@ -69,6 +73,8 @@ public class Mannequin extends Avatar {
             SynchedEntityData.defineId(Mannequin.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Optional<Component>> DATA_DESCRIPTION =
             SynchedEntityData.defineId(Mannequin.class, EntityDataSerializers.OPTIONAL_COMPONENT);
+    private static final EntityDataAccessor<Float> DATA_WALK_SPEED =
+            SynchedEntityData.defineId(Mannequin.class, EntityDataSerializers.FLOAT);
 
 
     private static final byte ALL_LAYERS = computeAllLayers();
@@ -117,6 +123,7 @@ public class Mannequin extends Avatar {
     private static final String IMMOVABLE_FIELD = "immovable";
     private static final String DESCRIPTION_FIELD = "description";
     private static final String HIDE_DESCRIPTION_FIELD = "hide_description";
+    private static final String WALK_SPEED_FIELD = "walk_speed";
 
     // State
     private Component description;
@@ -146,6 +153,7 @@ public class Mannequin extends Avatar {
         entityData.define(DATA_PROFILE, encodeProfile(DEFAULT_PROFILE));
         entityData.define(DATA_IMMOVABLE, false);
         entityData.define(DATA_DESCRIPTION, Optional.of(DEFAULT_DESCRIPTION));
+        entityData.define(DATA_WALK_SPEED, 0.0f);
     }
 
     @Override
@@ -183,7 +191,7 @@ public class Mannequin extends Avatar {
     }
 
     private boolean getImmovable() {
-        return (Boolean)this.entityData.get(DATA_IMMOVABLE);
+        return this.entityData.get(DATA_IMMOVABLE);
     }
 
     private void setImmovable(final boolean immovable) {
@@ -216,9 +224,31 @@ public class Mannequin extends Avatar {
         return !this.getImmovable() && super.isEffectiveAi();
     }
 
+    public float getWalkSpeed() {
+        return this.entityData.get(DATA_WALK_SPEED);
+    }
+
+    public void setWalkSpeed(final float walkSpeed) {
+        this.entityData.set(DATA_WALK_SPEED, Mth.clamp(walkSpeed, 0.0f, 1.0f));
+    }
+
     public void aiStep() {
         super.aiStep();
         this.updateSwingTime();
+
+        final float walkSpeed = getWalkSpeed();
+        if(walkSpeed > 0.0f) {
+            this.walkAnimation.update(walkSpeed, 0.4f);
+        }
+        else if(this.walkAnimation.speed() > 0.001f) {
+            this.walkAnimation.update(0.0f, 0.4f);
+        }
+    }
+
+    public void updateWalkAnimation(final float distance) {
+        if(getWalkSpeed() <= 0.0f) {
+            super.updateWalkAnimation(distance);
+        }
     }
 
     @Override
@@ -258,6 +288,7 @@ public class Mannequin extends Avatar {
         tag.putString(MAIN_HAND_FIELD, this.getMainArm() == HumanoidArm.LEFT ? "left" : "right");
         this.store(tag, POSE_FIELD, POSE_CODEC, this.getPose());
         tag.putBoolean(IMMOVABLE_FIELD, this.getImmovable());
+        tag.putFloat(WALK_SPEED_FIELD, this.getWalkSpeed());
 
         final Component description = this.getDescription();
         if (description != null) {
@@ -294,6 +325,7 @@ public class Mannequin extends Avatar {
         this.setImmovable(tag.getBoolean(IMMOVABLE_FIELD));
         this.setHideDescription(tag.getBoolean(HIDE_DESCRIPTION_FIELD));
         this.setDescription(this.read(tag, DESCRIPTION_FIELD, ComponentSerialization.CODEC).orElse(DEFAULT_DESCRIPTION));
+        this.setWalkSpeed(tag.contains(WALK_SPEED_FIELD, Tag.TAG_ANY_NUMERIC) ? tag.getFloat(WALK_SPEED_FIELD) : 0.0f);
 
         if (tag.contains("ArmorItems", Tag.TAG_LIST)) {
             final ListTag armor = tag.getList("ArmorItems", Tag.TAG_COMPOUND);
