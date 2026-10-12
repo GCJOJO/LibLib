@@ -11,12 +11,14 @@ import io.github.gcjojo.liblib.api.CutsceneLibAPI;
 import io.github.gcjojo.liblib.api.QuestsLibAPI;
 import io.github.gcjojo.liblib.client.FadeManager;
 import io.github.gcjojo.liblib.client.SoundPlayer;
+import io.github.gcjojo.liblib.client.entities.LibLibRenderers;
 import io.github.gcjojo.liblib.client.gui.TestGui;
 import io.github.gcjojo.liblib.client.gui.elements.GuiElement;
 import io.github.gcjojo.liblib.commands.CameraCommand;
 import io.github.gcjojo.liblib.commands.FadeCommand;
 import io.github.gcjojo.liblib.commands.HideGUICommand;
 import io.github.gcjojo.liblib.commands.LockInputCommand;
+import io.github.gcjojo.liblib.entity.LibLibEntities;
 import io.github.gcjojo.liblib.events.LibLibEvents;
 import io.github.gcjojo.liblib.factory.PlayerDataRegistry;
 import io.github.gcjojo.liblib.network.LibLibNetwork;
@@ -110,6 +112,8 @@ public final class LibLib {
         });
 
         LibLibNetwork.registerPayloadTypes();
+
+        LibLibEntities.init();
     }
 
     public static void registerCommands(CommandManager<CommandSourceStack> commandManager) {
@@ -146,6 +150,8 @@ public final class LibLib {
         ClientPlayerEvent.CLIENT_PLAYER_QUIT.register((@Nullable LocalPlayer player) -> FadeManager.clearAllFade());
 
         LibLibNetwork.registerClientReceiver();
+
+        LibLibRenderers.init();
     }
 
     public static SoundPlayer getSoundPlayer() {
