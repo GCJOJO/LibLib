@@ -8,6 +8,10 @@ import org.joml.Vector3f;
 
 @FunctionalInterface
 public interface Interpolator<T> {
+    static <T> Interpolator<T> constant() {
+        return ((start, end, progress) -> start);
+    }
+
     Interpolator<Boolean> BOOL = (start, end, progress) -> progress >= 1.0f ? end : start;
     Interpolator<Float> FLOAT = MathUtils::lerp;
     Interpolator<Integer> INTEGER = MathUtils::lerp;
@@ -19,6 +23,6 @@ public interface Interpolator<T> {
     Interpolator<Color> COLOR = MathUtils::lerp;
 
 
-    T lerp(T start, T end, float progress);
+    T interpolate(T start, T end, float progress);
 }
 

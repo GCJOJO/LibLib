@@ -61,7 +61,7 @@ public class TweenProperty<T> extends Tween {
         float easedProgress = easing.apply(progress);
 
         if (isValid())
-            setter.accept(interpolator.lerp(startValue.get(), endValue.get(), easedProgress));
+            setter.accept(interpolator.interpolate(startValue.get(), endValue.get(), easedProgress));
 
         if (progress >= 1.0f) {
             finished = true;
