@@ -113,6 +113,10 @@ public final class LibLib {
             inventoryDifference.forEach((itemId, amountDelta) -> getLogger().info("    {}x{}", amountDelta, itemId));
         });
 
+        LibLibEvents.PRE_FRAME_RENDER.register(deltaTracker -> {
+            TweenManager.updateSequences(deltaTracker.getGameTimeDeltaTicks(), TweenManager.TweenSide.CLIENT);
+        });
+
         LibLibNetwork.registerPayloadTypes();
 
         LibLibEntities.init();

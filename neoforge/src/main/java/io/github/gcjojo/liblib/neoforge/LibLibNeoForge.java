@@ -1,9 +1,8 @@
 package io.github.gcjojo.liblib.neoforge;
 
 import io.github.gcjojo.liblib.LibLib;
-import io.github.gcjojo.liblib.neoforge.client.NeoForgeSoundPlayer;
+import io.github.gcjojo.liblib.events.LibLibEvents;
 import io.github.gcjojo.liblib.neoforge.utils.NeoForgePlayerDataManager;
-import io.github.gcjojo.liblib.tween.TweenManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,7 +31,6 @@ public final class LibLibNeoForge {
     public static class ClientModEntryForge {
         public ClientModEntryForge() {
             LibLib.initClient();
-            LibLib.setSoundPlayer(new NeoForgeSoundPlayer());
 
             NeoForge.EVENT_BUS.register(new ClientEventHandler());
         }
@@ -41,7 +39,7 @@ public final class LibLibNeoForge {
     public static class ClientEventHandler {
         @SubscribeEvent
         public void onRenderFrame(RenderFrameEvent.Pre event) {
-            TweenManager.updateSequences(event.getPartialTick().getGameTimeDeltaTicks(), TweenManager.TweenSide.CLIENT);
+            LibLibEvents.PRE_FRAME_RENDER.invoker().onPreFrameRender(event.getPartialTick());
         }
     }
 }

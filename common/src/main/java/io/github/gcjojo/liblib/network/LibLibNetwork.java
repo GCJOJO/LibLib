@@ -19,6 +19,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
@@ -26,6 +27,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LibLibNetwork {
+
+    public static final StreamCodec<ByteBuf, Vec2> VEC2_STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.FLOAT, vec -> vec.x,
+            ByteBufCodecs.FLOAT, vec -> vec.y,
+            Vec2::new
+    );
 
     public static final StreamCodec<ByteBuf, Vec3> VEC3_STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.DOUBLE, Vec3::x,
