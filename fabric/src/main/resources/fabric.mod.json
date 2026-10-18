@@ -25,6 +25,7 @@
     ]
   },
   "mixins": [
+    "liblib-fabric.mixins.json",
     "liblib.mixins.json"
   ],
   "depends": {

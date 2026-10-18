@@ -8,7 +8,6 @@
     "client.GameRendererMixin",
     "client.GuiMixin",
     "client.KeyboardInputMixin",
-    "client.LevelRendererMixin",
     "client.MouseHandlerMixin"
   ],
   "mixins": [

@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "plugin": "io.github.gcjojo.liblib.fabric.mixin.LibLibMixinPlugin",
+  "package": "io.github.gcjojo.liblib.mixin",
+  "client" : [
+    "client.LevelRendererMixin"
+  ]
+}

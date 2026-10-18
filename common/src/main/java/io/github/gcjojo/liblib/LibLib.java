@@ -19,6 +19,7 @@ import io.github.gcjojo.liblib.commands.FadeCommand;
 import io.github.gcjojo.liblib.commands.HideGUICommand;
 import io.github.gcjojo.liblib.commands.LockInputCommand;
 import io.github.gcjojo.liblib.entity.LibLibEntities;
+import io.github.gcjojo.liblib.entity.Mannequin;
 import io.github.gcjojo.liblib.events.LibLibEvents;
 import io.github.gcjojo.liblib.factory.PlayerDataRegistry;
 import io.github.gcjojo.liblib.network.LibLibNetwork;
@@ -27,6 +28,7 @@ import io.github.gcjojo.liblib.utils.PlayerDataManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -152,6 +154,8 @@ public final class LibLib {
         LibLibNetwork.registerClientReceiver();
 
         LibLibRenderers.init();
+
+        Mannequin.clientExecutor = Minecraft.getInstance();
     }
 
     public static SoundPlayer getSoundPlayer() {

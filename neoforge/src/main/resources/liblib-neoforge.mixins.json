@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "package": "io.github.gcjojo.liblib.mixin",
+  "plugin": "io.github.gcjojo.liblib.neoforge.mixin.LibLibMixinPlugin",
+  "client" : [
+    "client.LevelRendererMixin"
+  ]
+}

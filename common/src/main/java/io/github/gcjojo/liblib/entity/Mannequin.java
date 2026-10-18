@@ -1,5 +1,6 @@
 package io.github.gcjojo.liblib.entity;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -30,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 // Backported from 26.1 with help from claude slop
 
@@ -129,6 +131,9 @@ public class Mannequin extends Avatar {
     private boolean hideDescription;
     private @Nullable ResolvableProfile profileCache;
 
+    public static volatile Executor clientExecutor = Runnable::run;
+    private @Nullable ResolvableProfile pendingProfile;
+
     private final NonNullList<ItemStack> handItems = NonNullList.withSize(2, ItemStack.EMPTY);
     private final NonNullList<ItemStack> armorItems = NonNullList.withSize(4, ItemStack.EMPTY);
 
@@ -173,12 +178,30 @@ public class Mannequin extends Avatar {
         return this.profileCache;
     }
 
-    private void setProfile(final ResolvableProfile profile) {
+    public void setProfile(final ResolvableProfile profile) {
+        this.pendingProfile = profile;
         this.entityData.set(DATA_PROFILE, encodeProfile(profile));
+        this.profileCache = null;
 
-        if (!this.level().isClientSide && this.level().getServer() != null && !profile.isResolved()) {
-            profile.resolve().thenAcceptAsync(this::setProfile, this.level().getServer());
+        if(profile.isResolved()) return;
+
+        if (!this.level().isClientSide) {
+            if(this.level().getServer() != null)
+            {
+                profile.resolve().thenAcceptAsync(this::setProfile, this.level().getServer());
+            }
+            else {
+                profile.resolve().thenAcceptAsync(resolved -> {
+                    if(this.pendingProfile == profile) {
+                        this.setProfile(resolved);
+                    }
+                }, clientExecutor);
+            }
         }
+    }
+
+    public void setProfile(final GameProfile profile) {
+        setProfile(new ResolvableProfile(profile));
     }
 
     private static CompoundTag encodeProfile(final ResolvableProfile profile) {
