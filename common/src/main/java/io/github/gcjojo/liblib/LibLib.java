@@ -10,7 +10,6 @@ import io.github.gcjojo.liblib.api.BlablaLibAPI;
 import io.github.gcjojo.liblib.api.CutsceneLibAPI;
 import io.github.gcjojo.liblib.api.QuestsLibAPI;
 import io.github.gcjojo.liblib.client.FadeManager;
-import io.github.gcjojo.liblib.client.SoundPlayer;
 import io.github.gcjojo.liblib.client.entities.LibLibRenderers;
 import io.github.gcjojo.liblib.client.gui.TestGui;
 import io.github.gcjojo.liblib.client.gui.elements.GuiElement;
@@ -79,7 +78,6 @@ public final class LibLib {
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static long lastTick = -1;
-    private static SoundPlayer SOUND_PLAYER;
     private static PlayerDataManager PLAYER_DATA_MANAGER;
 
 
@@ -160,14 +158,6 @@ public final class LibLib {
         LibLibRenderers.init();
 
         Mannequin.clientExecutor = Minecraft.getInstance();
-    }
-
-    public static SoundPlayer getSoundPlayer() {
-        return SOUND_PLAYER;
-    }
-
-    public static void setSoundPlayer(SoundPlayer newSoundPlayer) {
-        SOUND_PLAYER = newSoundPlayer;
     }
 
     public static PlayerDataManager getPlayerDataManager() {

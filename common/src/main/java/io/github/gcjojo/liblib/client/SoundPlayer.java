@@ -9,28 +9,27 @@ import net.minecraft.sounds.SoundEvent;
 import java.util.Optional;
 
 public class SoundPlayer {
-
-    public void playSound(String soundName) {
+    public static void playSound(String soundName) {
         playSound(soundName, 1.0f, 1.0f);
     }
 
-    public void playSound(String soundName, float pitch, float volume){
+    public static void playSound(String soundName, float pitch, float volume){
         playSound(ResourceLocation.tryParse(soundName), pitch, volume);
     }
 
-    public void playSound(ResourceLocation soundLocation, float pitch, float volume) {
+    public static void playSound(ResourceLocation soundLocation, float pitch, float volume) {
         loadSound(soundLocation).ifPresent(soundEvent ->
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, pitch, volume)));
     }
 
-    public Optional<SoundEvent> loadSound(String soundName) {
+    public static Optional<SoundEvent> loadSound(String soundName) {
         ResourceLocation resourceLocation = ResourceLocation.tryParse(soundName);
         if (resourceLocation == null) return Optional.empty();
 
         return loadSound(resourceLocation);
     }
 
-    public Optional<SoundEvent> loadSound(ResourceLocation soundLocation) {
+    public static Optional<SoundEvent> loadSound(ResourceLocation soundLocation) {
         return BuiltInRegistries.SOUND_EVENT.getOptional(soundLocation);
     }
 }
