@@ -57,6 +57,11 @@ public class Color {
         }
     }
 
+    public static Color fromString(String string, Color other) {
+        Color color = Color.fromString(string);
+        return color != null ? color : other;
+    }
+
     public int getColorInt() {
         return FastColor.ARGB32.color(alpha, red, green, blue);
     }
