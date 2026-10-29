@@ -38,9 +38,14 @@ public class Color {
 
     public static Color fromString(String string) {
         try {
-            if (string.startsWith("#") && string.length() == 8) {
-                int colorInt = Integer.parseInt(string.substring(1), 16);
-                return new Color(colorInt);
+            if (string.startsWith("#")) {
+                String hex = string.substring(1);
+
+                if(hex.length() == 8)
+                    return new Color(Integer.parseUnsignedInt(hex, 16));
+                else if(hex.length() == 6)
+                    return new Color(0xFF000000 | Integer.parseUnsignedInt(hex, 16));
+                return null;
             }
 
             return switch (string.toLowerCase()) {
