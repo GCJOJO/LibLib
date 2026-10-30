@@ -17,6 +17,8 @@ public abstract class QuestsLibAPI {
     public abstract boolean setTaskCompletionState(Player player, ResourceLocation questId, ResourceLocation taskId, String newState);
     public abstract boolean isQuestCompleted(Player player, ResourceLocation questId);
     public abstract boolean isTaskCompleted(Player player, ResourceLocation questId, ResourceLocation taskId);
+    public abstract String getQuestCompletionState(Player player, ResourceLocation questId);
+    public abstract String getTaskCompletionState(Player player, ResourceLocation questId, ResourceLocation taskId);
     public abstract float getQuestCompletion(Player player, ResourceLocation questId);
 
     public abstract Optional<ResourceLocation> getCurrentTask(Player player, ResourceLocation questId);
@@ -53,6 +55,12 @@ public abstract class QuestsLibAPI {
 
         @Override
         public boolean isTaskCompleted(Player player, ResourceLocation questId, ResourceLocation taskId) { return false; }
+
+        @Override
+        public String getQuestCompletionState(Player player, ResourceLocation questId) { return ""; }
+
+        @Override
+        public String getTaskCompletionState(Player player, ResourceLocation questId, ResourceLocation taskId) { return ""; }
 
         @Override
         public float getQuestCompletion(Player player, ResourceLocation questId) {
