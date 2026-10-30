@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Optional;
 
+@SuppressWarnings("unused")
 public abstract class BlablaLibAPI {
     public static Event<DialogueCompleted> DIALOGUE_COMPLETED = EventFactory.createLoop();
 
@@ -21,7 +22,7 @@ public abstract class BlablaLibAPI {
     public abstract void setPlayerLastReadDialogue(ServerPlayer player, ResourceLocation lastReadDialogueId);
 
     public interface DialogueCompleted {
-        public void onDialogueCompleted(ServerPlayer player, ResourceLocation dialogueId);
+        void onDialogueCompleted(ServerPlayer player, ResourceLocation dialogueId);
     }
 
     public static class EmptyBlablaLibAPI extends BlablaLibAPI {

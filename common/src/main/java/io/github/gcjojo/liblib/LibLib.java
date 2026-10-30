@@ -111,9 +111,7 @@ public final class LibLib {
             inventoryDifference.forEach((itemId, amountDelta) -> getLogger().info("    {}x{}", amountDelta, itemId));
         });
 
-        LibLibEvents.PRE_FRAME_RENDER.register(deltaTracker -> {
-            TweenManager.updateSequences(deltaTracker.getGameTimeDeltaTicks(), TweenManager.TweenSide.CLIENT);
-        });
+        LibLibEvents.PRE_FRAME_RENDER.register(deltaTracker -> TweenManager.updateSequences(deltaTracker.getGameTimeDeltaTicks(), TweenManager.TweenSide.CLIENT));
 
         LibLibNetwork.registerPayloadTypes();
 
@@ -168,26 +166,32 @@ public final class LibLib {
         PLAYER_DATA_MANAGER = newPlayerDataManager;
     }
 
+    @SuppressWarnings("unused")
     public static BlablaLibAPI getBlablaLibAPI() {
         return BLABLALIB_API;
     }
 
+    @SuppressWarnings("unused")
     public static void setBlablaLibAPI(BlablaLibAPI api) {
         BLABLALIB_API = api;
     }
 
+    @SuppressWarnings("unused")
     public static QuestsLibAPI getQuestsLibAPI() {
         return QUESTSLIB_API;
     }
 
+    @SuppressWarnings("unused")
     public static void setQuestsLibAPI(QuestsLibAPI api) {
         QUESTSLIB_API = api;
     }
 
+    @SuppressWarnings("unused")
     public static CutsceneLibAPI getCutscenelibAPI() {
         return CUTSCENELIB_API;
     }
 
+    @SuppressWarnings("unused")
     public static void setCutsceneLibAPI(CutsceneLibAPI api) {
         CUTSCENELIB_API = api;
     }

@@ -9,6 +9,7 @@ import org.joml.Vector3f;
 
 import java.util.Collection;
 
+@SuppressWarnings("unused")
 public abstract class CutsceneLibAPI {
     public static Event<CutsceneCompleted> CUTSCENE_COMPLETED = EventFactory.createLoop();
 
