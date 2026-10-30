@@ -12,13 +12,10 @@ public abstract class QuestsLibAPI {
     public static Event<TaskCompleted> TASK_COMPLETED = EventFactory.createLoop();
 
     public abstract boolean startQuest(Player player, ResourceLocation questId);
-
     public abstract boolean setQuestCompletionState(Player player, ResourceLocation questId, String newState);
-
     public abstract boolean setTaskCompletionState(Player player, ResourceLocation questId, ResourceLocation taskId, String newState);
-
     public abstract boolean isQuestCompleted(Player player, ResourceLocation questId);
-
+    public abstract boolean isTaskCompleted(Player player, ResourceLocation questId, ResourceLocation taskId);
     public abstract float getQuestCompletion(Player player, ResourceLocation questId);
 
     public abstract Optional<ResourceLocation> getCurrentTask(Player player, ResourceLocation questId);
@@ -43,14 +40,10 @@ public abstract class QuestsLibAPI {
         }
 
         @Override
-        public boolean setQuestCompletionState(Player player, ResourceLocation questId, String newState) {
-            return false;
-        }
+        public boolean setQuestCompletionState(Player player, ResourceLocation questId, String newState) { return false; }
 
         @Override
-        public boolean setTaskCompletionState(Player player, ResourceLocation questId, ResourceLocation taskId, String newState) {
-            return false;
-        }
+        public boolean setTaskCompletionState(Player player, ResourceLocation questId, ResourceLocation taskId, String newState) { return false; }
 
         @Override
         public boolean isQuestCompleted(Player player, ResourceLocation questId) {
@@ -58,13 +51,14 @@ public abstract class QuestsLibAPI {
         }
 
         @Override
+        public boolean isTaskCompleted(Player player, ResourceLocation questId, ResourceLocation taskId) { return false; }
+
+        @Override
         public float getQuestCompletion(Player player, ResourceLocation questId) {
             return 0;
         }
 
         @Override
-        public Optional<ResourceLocation> getCurrentTask(Player player, ResourceLocation questId) {
-            return Optional.empty();
-        }
+        public Optional<ResourceLocation> getCurrentTask(Player player, ResourceLocation questId) { return Optional.empty(); }
     }
 }
