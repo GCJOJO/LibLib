@@ -5,28 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 
 @Getter
 @Setter
 public class GuiImage extends GuiElement {
-    // TODO Remove
-    /*public static ResourceLocation BOSS_BAR_BLUE_BACKGROUND = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/blue_background.png");
-    public static ResourceLocation BOSS_BAR_BLUE_PROGRESS = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/blue_progress.png");
-    public static ResourceLocation BOSS_BAR_GREEN_BACKGROUND = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/green_background.png");
-    public static ResourceLocation BOSS_BAR_GREEN_PROGRESS = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/green_progress.png");
-    public static ResourceLocation BOSS_BAR_PINK_BACKGROUND = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/pink_background.png");
-    public static ResourceLocation BOSS_BAR_PINK_PROGRESS = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/pink_progress.png");
-    public static ResourceLocation BOSS_BAR_PURPLE_BACKGROUND = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/purple_background.png");
-    public static ResourceLocation BOSS_BAR_PURPLE_PROGRESS = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/purple_progress.png");
-    public static ResourceLocation BOSS_BAR_RED_BACKGROUND = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/red_background.png");
-    public static ResourceLocation BOSS_BAR_RED_PROGRESS = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/red_progress.png");
-    public static ResourceLocation BOSS_BAR_WHITE_BACKGROUND = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/white_background.png");
-    public static ResourceLocation BOSS_BAR_WHITE_PROGRESS = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/white_progress.png");
-    public static ResourceLocation BOSS_BAR_YELLOW_BACKGROUND = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/yellow_background.png");
-    public static ResourceLocation BOSS_BAR_YELLOW_PROGRESS = ResourceLocation.tryParse("textures/gui/sprites/boss_bar/yellow_progress.png");*/
     protected ResourceLocation imagePath;
     protected ImageHorizontalAlignment imageHorizontalAlignment;
     protected ImageVerticalAlignment imageVerticalAlignment;
