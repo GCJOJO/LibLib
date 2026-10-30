@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.Optional;
 
+@SuppressWarnings("unused")
 public abstract class QuestsLibAPI {
     public static Event<QuestCompleted> QUEST_COMPLETED = EventFactory.createLoop();
     public static Event<TaskCompleted> TASK_COMPLETED = EventFactory.createLoop();
