@@ -56,14 +56,12 @@ public class TextEffects {
         if (colorStart == null || colorEnd == null)
             return (charIndex, time, baseColor) -> new TextEffect.CharTransform(0, 0, 0, 1, Color.WHITE);
 
-        // On utilise un compteur interne car le charIndex global ne correspond pas à la position dans le span
-        int[] localCounter = {0};
-
+        // Slopy Claude Slop
+        int[] firstIndex = {-1};
         return (charIndex, time, baseColor) -> {
-            float t = spanLength <= 1 ? 0 : (float) localCounter[0] / (spanLength - 1);
-            localCounter[0]++;
-            Color color = MathUtils.lerp(colorStart, colorEnd, t);
-            return new TextEffect.CharTransform(0, 0, 0, 1, color);
+            if (firstIndex[0] < 0) firstIndex[0] = charIndex;
+            float t = spanLength <= 1 ? 0 : (float) (charIndex - firstIndex[0]) / (spanLength - 1);
+            return new TextEffect.CharTransform(0, 0, 0, 1, MathUtils.lerp(colorStart, colorEnd, t));
         };
     }
 

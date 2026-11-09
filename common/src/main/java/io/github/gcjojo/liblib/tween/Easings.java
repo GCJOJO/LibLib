@@ -21,7 +21,13 @@ public final class Easings {
     }
 
     public static Set<String> names() { return Collections.unmodifiableSet(BY_NAME.keySet()); }
-    public static Easing get(String name) { return BY_NAME.get(name); }
+    public static Easing get(String name)
+    {
+        Easing easing = BY_NAME.get(name);
+        if(easing == null)
+            return Easing.LINEAR;
+        return easing;
+    }
     public static String nameOf(Easing easing) { return BY_VALUE.get(easing); }
 
     public static final Codec<Easing> CODEC = Codec.STRING.flatXmap(

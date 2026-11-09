@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 // Ok là j'avoue j'ai demandé de l'aide à ClaudeSlop
 public class BBCodeParser {
-    private static final Pattern TOKEN_PATTERN = Pattern.compile("\\[(/?)(\\w+)((?:\\s+\\w+=\\S+)*)]|([^\\[]+)");
+    private static final Pattern TOKEN_PATTERN = Pattern.compile("\\[(/?)(\\w+)((?:\\s+\\w+=[^\\s\\]]+)*)]|([^\\[]+)");
     private static final Set<String> STYLE_TAGS = Set.of("b", "i", "u", "s", "color");
 
     public static List<BBNode> parse(String input) {

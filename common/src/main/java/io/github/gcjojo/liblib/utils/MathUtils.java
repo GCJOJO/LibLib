@@ -70,10 +70,10 @@ public class MathUtils {
 
     public static Color lerp(Color start, Color end, float progress) {
         return new Color(
-                lerp(start.alpha, end.alpha, progress),
                 lerp(start.red, end.red, progress),
                 lerp(start.green, end.green, progress),
-                lerp(start.blue, end.blue, progress)
+                lerp(start.blue, end.blue, progress),
+                lerp(start.alpha, end.alpha, progress)
         );
     }
 

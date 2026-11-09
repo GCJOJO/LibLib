@@ -42,7 +42,11 @@ public class Color {
                 String hex = string.substring(1);
 
                 if(hex.length() == 8)
-                    return new Color(Integer.parseUnsignedInt(hex, 16));
+                {
+                    // Sloppy Claude Math
+                    int colorInt = Integer.parseUnsignedInt(hex, 16);
+                    return new Color(colorInt >> 24, (colorInt >> 16) & 255, (colorInt >> 8) & 255, colorInt & 255);
+                }
                 else if(hex.length() == 6)
                     return new Color(0xFF000000 | Integer.parseUnsignedInt(hex, 16));
                 return null;

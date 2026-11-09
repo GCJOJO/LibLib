@@ -114,7 +114,8 @@ public class GuiRichText extends GuiText {
             if (textWidth > 0.0f && c.character() == ' ') {
                 float wordWidth = 0.0f;
                 for (int j = i + 1; j < styledCharacters.size(); j++) {
-                    if (styledCharacters.get(j).character() == ' ') break;
+                    char next = styledCharacters.get(j).character();
+                    if (next == ' ' || next == '\n') break;
                     wordWidth += font.width(String.valueOf(styledCharacters.get(j).character()));
                 }
 
