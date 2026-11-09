@@ -41,11 +41,10 @@ public class Color {
             if (string.startsWith("#")) {
                 String hex = string.substring(1);
 
-                if(hex.length() == 8)
-                {
-                    // Sloppy Claude Math
+                if (hex.length() == 8) {
+                    // Sloppy Claude Slop Math
                     int colorInt = Integer.parseUnsignedInt(hex, 16);
-                    return new Color(colorInt >> 24, (colorInt >> 16) & 255, (colorInt >> 8) & 255, colorInt & 255);
+                    return new Color(colorInt >>> 24, (colorInt >>> 16) & 0xFF, (colorInt >>> 8) & 0xFF, colorInt & 0xFF);
                 }
                 else if(hex.length() == 6)
                     return new Color(0xFF000000 | Integer.parseUnsignedInt(hex, 16));
